@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C,GCC," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Linux内核大量依赖GCC的某些扩展特性，这个网站讨论了其中一部分，通常是为了提供新功能或者帮助编译器生成更高效的代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用于C语言的GCC扩展">
+<meta property="og:url" content="http://example.com/2019/05/22/%E7%94%A8%E4%BA%8EC%E8%AF%AD%E8%A8%80%E7%9A%84GCC%E6%89%A9%E5%B1%95/index.html">
+<meta property="og:site_name" content="Hyper">
+<meta property="og:description" content="Linux内核大量依赖GCC的某些扩展特性，这个网站讨论了其中一部分，通常是为了提供新功能或者帮助编译器生成更高效的代码。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-05-22T07:10:36.000Z">
+<meta property="article:modified_time" content="2019-06-20T01:52:17.715Z">
+<meta property="article:author" content="Galois">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="GCC">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2019/05/22/用于C语言的GCC扩展/"/>
+
+
+
+
+
+  <title>用于C语言的GCC扩展 | Hyper</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/05/22/%E7%94%A8%E4%BA%8EC%E8%AF%AD%E8%A8%80%E7%9A%84GCC%E6%89%A9%E5%B1%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">用于C语言的GCC扩展</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-22T15:10:36+08:00">
+                2019-05-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机科学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Linux内核大量依赖GCC的某些扩展特性，<a target="_blank" rel="noopener" href="http://adam8157.info/blog/2014/08/why-does-linux-kernel-depend-on-gcc-for-now/">这个网站</a>讨论了其中一部分，通常是为了提供新功能或者帮助编译器生成更高效的代码。</p>
+<span id="more"></span>
+
+
+
+<p>根据扩展特性的用途，可以分为功能性扩展和优化性扩展。</p>
+<h1 id="功能性扩展"><a href="#功能性扩展" class="headerlink" title="功能性扩展"></a>功能性扩展</h1><h2 id="类型发现"><a href="#类型发现" class="headerlink" title="类型发现"></a>类型发现</h2><p>GCC 允许通过变量的引用识别类型。这种操作支持<strong>泛型编程</strong>。在 C++、Ada 和 Java语言等许多现代编程语言中都可以找到相似的功能。Linux 使用 <code>typeof</code> 构建 <code>min</code> 和 <code>max</code> 等依赖于类型的操作。例1演示如何使用 <code>typeof</code> 构建一个泛型宏（见 ./linux/include/linux/kernel.h）。</p>
+<p>例1. 使用 <code>typeof</code> 构建一个泛型宏</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> min(x, y) (&#123;                \</span></span><br><span class="line"><span class="meta">    typeof(x) _min1 = (x);          \</span></span><br><span class="line"><span class="meta">    typeof(y) _min2 = (y);          \</span></span><br><span class="line"><span class="meta">    (void) (&amp;_min1 == &amp;_min2);      \</span></span><br><span class="line"><span class="meta">    _min1 &lt; _min2 ? _min1 : _min2; &#125;)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="范围扩展"><a href="#范围扩展" class="headerlink" title="范围扩展"></a>范围扩展</h2><p>GCC 支持范围扩展，通过<code>...</code>符号实现。其中之一是 <code>switch</code>/<code>case</code> 块中的 <code>case</code> 语句。在复杂的条件结构中，通常依靠嵌套的 <code>if</code> 语句实现与例 2（见 ./linux/drivers/scsi/sd.c）相同的结果，但是例 2 更简洁。使用 <code>switch</code>/<code>case</code> 也可以通过使用跳转表实现进行编译器优化。</p>
+<p>例2. 在case语句中使用范围</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">sd_major</span><span class="params">(<span class="keyword">int</span> major_idx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (major_idx) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK0_MAJOR;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span> ... <span class="number">7</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK1_MAJOR + major_idx - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">8</span> ... <span class="number">15</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK8_MAJOR + major_idx - <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        BUG();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;   <span class="comment">/* shut up gcc */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>还可以使用范围进行初始化，如下所示（见 ./linux/arch/cris/arch-v32/kernel/smp.c）。在这个示例中，<code>spinlock_t</code> 创建一个大小为 <code>LOCK_COUNT</code> 的数组。数组的每个元素初始化为 <code>SPIN_LOCK_UNLOCKED</code> 值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Vector of locks used for various atomic operations */</span></span><br><span class="line"><span class="keyword">spinlock_t</span> cris_atomic_locks[] = &#123; [<span class="number">0</span> ... LOCK_COUNT - <span class="number">1</span>] = SPIN_LOCK_UNLOCKED&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>范围还支持更复杂的初始化。例如，以下代码指定数组中几个子范围的初始值。</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> widths[] = &#123; [<span class="number">0</span> ... <span class="number">9</span>] = <span class="number">1</span>, [<span class="number">10</span> ... <span class="number">99</span>] = <span class="number">2</span>, [<span class="number">100</span>] = <span class="number">3</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="零长度的数组"><a href="#零长度的数组" class="headerlink" title="零长度的数组"></a>零长度的数组</h2><p>在 C 标准中，必须定义至少一个数组元素。这个需求往往会使代码设计复杂化。但是，GCC 支持零长度数组的概念，这对于结构定义尤其有用。这个概念与 ISO C99 中灵活的数组成员相似，但是使用不同的语法。</p>
+<p>下面的示例在结构的末尾声明一个没有成员的数组（见 ./linux/drivers/ieee1394/raw1394-private.h）。这允许结构中的元素引用结构实例后面紧接着的内存。在需要数量可变的数组成员时，这个特性很有用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">iso_block_store</span> &#123;</span></span><br><span class="line">        <span class="keyword">atomic_t</span> refcount;</span><br><span class="line">        <span class="keyword">size_t</span> data_size;</span><br><span class="line">        <span class="keyword">quadlet_t</span> data[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="判断调用地址"><a href="#判断调用地址" class="headerlink" title="判断调用地址"></a>判断调用地址</h2><p>在许多情况下，需要判断给定函数的调用者。GCC 提供用于此用途的内置函数 <code>__builtin_return_address</code>。这个函数通常用于调试，但是它在内核中还有许多其他用途。</p>
+<p>如下面的代码所示，<code>__builtin_return_address</code> 接收一个称为 <code>level</code> 的参数。这个参数定义希望获取返回地址的调用堆栈级别。例如，如果指定 <code>level</code> 为 <code>0</code>，那么就是请求当前函数的返回地址。如果指定 <code>level</code> 为 <code>1</code>，那么就是请求进行调用的函数的返回地址，依此类推。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> * __builtin_return_address( <span class="keyword">unsigned</span> <span class="keyword">int</span> level );</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在下面的示例中（见 ./linux/kernel/softirq.c），<code>local_bh_disable</code> 函数在本地处理器上禁用软中断，从而禁止在当前处理器上运行 softirqs、tasklets 和 bottom halves。使用 <code>__builtin_return_address</code> 捕捉返回地址，以便在以后进行跟踪时使用这个地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">local_bh_disable</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__local_bh_disable((<span class="keyword">unsigned</span> <span class="keyword">long</span>)__builtin_return_address(<span class="number">0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="常量检测"><a href="#常量检测" class="headerlink" title="常量检测"></a>常量检测</h2><p>在编译时，可以使用 GCC 提供的一个内置函数判断一个值是否是常量。这种信息非常有价值，因为可以构造出能够通过常量叠算（constant folding）优化的表达式。<code>__builtin_constant_p</code> 函数用来检测常量。</p>
+<p><code>__builtin_constant_p</code> 的原型如下所示。注意，<code>__builtin_constant_p</code> 并不能检测出所有常量，因为 GCC 不容易证明某些值是否是常量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __builtin_constant_p( <span class="built_in">exp</span> )</span><br></pre></td></tr></table></figure>
+
+<p>Linux 相当频繁地使用常量检测。在例 3 所示的示例中（见 ./linux/include/linux/log2.h），使用常量检测优化 <code>roundup_pow_of_two</code> 宏。如果发现表达式是常量，那么就使用可以优化的常量表达式。如果表达式不是常量，就调用另一个宏函数把值向上取整到 2 的幂。</p>
+<p>例3. 使用常量检测优化宏函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> roundup_pow_of_two(n)           \</span></span><br><span class="line"><span class="meta">(                       				\</span></span><br><span class="line"><span class="meta">	__builtin_constant_p(n) ? (     	\</span></span><br><span class="line"><span class="meta">		(n == 1) ? 1 :					\</span></span><br><span class="line"><span class="meta">        (1UL &lt;&lt; (ilog2((n) - 1) + 1)) 	\</span></span><br><span class="line"><span class="meta">                   ) :      			\</span></span><br><span class="line"><span class="meta">	__roundup_pow_of_two(n)         	\</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="函数属性"><a href="#函数属性" class="headerlink" title="函数属性"></a>函数属性</h2><p>GCC 提供许多函数级属性，主要通过<code>__attribute__</code>机制，可以通过它们向编译器提供更多数据，帮助编译器执行优化。最新的GCC编译器提供了更多函数属性的支持，详细见Declaring Attributes of Functions](<a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/Function-Attributes.html#Function-Attributes">https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/Function-Attributes.html#Function-Attributes</a>)</p>
+<p>如例4 所示，属性通过其他符号定义指定了别名。可以以此帮助阅读源代码参考，了解属性的使用方法（见 ./linux/include/linux/compiler-gcc3.h）。</p>
+<p>例4. 函数属性定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __inline__     __inline__      __attribute__((always_inline))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __deprecated           __attribute__((deprecated))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __attribute_used__     __attribute__((__used__))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __attribute_const__     __attribute__((__const__))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __must_check            __attribute__((warn_unused_result))</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>例 4 所示的定义是 GCC 中可用的一些函数属性。它们也是在 Linux 内核中最有用的函数属性。下面解释如何使用这些属性：</p>
+<ul>
+<li><code>always_inline</code> 让 GCC 以内联方式处理指定的函数，无论是否启用了优化。</li>
+<li><code>deprecated</code> 指出函数已经被废弃，不应该再使用。如果试图使用已经废弃的函数，就会收到警告。还可以对类型和变量应用这个属性，促使开发人员尽可能少使用它们。</li>
+<li><code>__used__</code> 告诉编译器无论 GCC 是否发现这个函数的调用实例，都要使用这个函数。这对于从汇编代码中调用 C 函数有帮助。</li>
+<li><code>__const__</code> 告诉编译器某个函数是无状态的（也就是说，它使用传递给它的参数生成要返回的结果）。</li>
+<li><code>warn_unused_result</code> 让编译器检查所有调用者是否都检查函数的结果。这确保调用者适当地检验函数结果，从而能够适当地处理错误。</li>
+</ul>
+<p>下面是在 Linux 内核中使用这些属性的示例。<code>deprecated</code> 示例来自与体系结构无关的内核（./linux/kernel/resource.c），<code>const</code> 示例来自 IA64 内核源代码（./linux/arch/ia64/kernel/unwind.c）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __deprecated __check_region(struct resource </span><br><span class="line">    *parent, <span class="keyword">unsigned</span> <span class="keyword">long</span> start, <span class="keyword">unsigned</span> <span class="keyword">long</span> n)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">enum</span> unw_register_index __attribute_const__ </span></span><br><span class="line"><span class="function">    <span class="title">decode_abreg</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> abreg, <span class="keyword">int</span> memory)</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="优化性扩展"><a href="#优化性扩展" class="headerlink" title="优化性扩展"></a>优化性扩展</h1><h2 id="分支预测提示"><a href="#分支预测提示" class="headerlink" title="分支预测提示"></a>分支预测提示</h2><p>在 Linux 内核中最常用的优化技术之一是 <code>__builtin_expect</code>。在开发人员使用有条件代码时，常常知道最可能执行哪个分支，而哪个分支很少执行。如果编译器知道这种预测信息，就可以围绕最可能执行的分支生成最优的代码。</p>
+<p>如下所示，<code>__builtin_expect</code> 的使用方法基于两个宏 <code>likely</code> 和 <code>unlikely</code>（见 ./linux/include/linux/compiler.h）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x)   __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br></pre></td></tr></table></figure>
+
+<p>通过使用 <code>__builtin_expect</code>，编译器可以做出符合提供的预测信息的指令选择决策。这使执行的代码尽可能接近实际情况。它还可以改进缓存和指令流水线。</p>
+<p>例如，如果一个条件标上了 “likely”，那么编译器可以把代码的 True 部分直接放在分支指令后面（这样就不需要执行分支指令）。通过分支指令访问条件结构的 False 部分，这不是最优的方式，但是访问它的可能性不大。按照这种方式，代码对于最可能出现的情况是最优的。</p>
+<p>例 5 给出一个使用 <code>likely</code> 和 <code>unlikely</code> 宏的函数（见 ./linux/net/core/datagram.c）。这个函数预测 <code>sum</code> 变量将是零（数据包的 <code>checksum</code> 是有效的），而且 <code>ip_summed</code> 变量不等于 <code>CHECKSUM_HW</code>。</p>
+<p>例 5. likely 和 unlikely 宏的使用示例</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> __skb_checksum_complete(struct sk_buff *skb)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> sum;</span><br><span class="line"> </span><br><span class="line">	sum = (u16)csum_fold(skb_checksum(skb, <span class="number">0</span>, skb-&gt;len, skb-&gt;csum));</span><br><span class="line">	<span class="keyword">if</span> (likely(!sum)) &#123;</span><br><span class="line">		<span class="keyword">if</span> (unlikely(skb-&gt;ip_summed == CHECKSUM_HW))</span><br><span class="line">			netdev_rx_csum_fault(skb-&gt;dev);</span><br><span class="line">		skb-&gt;ip_summed = CHECKSUM_UNNECESSARY;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="预读取"><a href="#预读取" class="headerlink" title="预读取"></a>预读取</h2><p>另一种重要的性能改进方法是把必需的数据缓存在接近处理器的地方。缓存可以显著减少访问数据花费的时间。大多数现代处理器都有三类内存：</p>
+<ul>
+<li>一级缓存通常支持单周期访问</li>
+<li>二级缓存支持两周期访问</li>
+<li>系统内存支持更长的访问时间</li>
+</ul>
+<p>为了尽可能减少访问延时并由此提高性能，最好把数据放在最近的内存中。手工执行这个任务称为<strong>预读取</strong>。GCC 通过内置函数 <code>__builtin_prefetch</code> 支持数据的手工预抓取。在需要数据之前，使用这个函数把数据放到缓存中。如下所示，<code>__builtin_prefetch</code> 函数接收三个参数：</p>
+<ul>
+<li>数据的地址</li>
+<li><code>rw</code> 参数，使用它指明预抓取数据是为了执行读操作，还是执行写操作</li>
+<li><code>locality</code> 参数，使用它指定在使用数据之后数据应该留在缓存中，还是应该清除</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __builtin_prefetch( <span class="keyword">const</span> <span class="keyword">void</span> *addr, <span class="keyword">int</span> rw, <span class="keyword">int</span> locality );</span><br></pre></td></tr></table></figure>
+
+<p>Linux 内核经常使用预读取。通常是通过宏和包装器函数使用预抓取。例 6 是一个辅助函数示例，它使用内置函数的包装器（见 ./linux/include/linux/prefetch.h）。这个函数为流操作实现预抓取机制。使用这个函数通常可以减少缓存缺失和停顿，从而提高性能。</p>
+<p>例6. 范围预读取的包装器函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> ARCH_HAS_PREFETCH</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> prefetch(x) __builtin_prefetch(x)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">prefetch_range</span><span class="params">(<span class="keyword">void</span> *addr, <span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> ARCH_HAS_PREFETCH</span></span><br><span class="line">    <span class="keyword">char</span> *cp;</span><br><span class="line">    <span class="keyword">char</span> *end = addr + len;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> (cp = addr; cp &lt; end; cp += PREFETCH_STRIDE)</span><br><span class="line">        prefetch(cp);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="变量属性"><a href="#变量属性" class="headerlink" title="变量属性"></a>变量属性</h2><p>除了本文前面讨论的函数属性之外，GCC 还为变量和类型定义提供了属性。最重要的属性之一是 <code>aligned</code> 属性，它用于在内存中实现对象对齐。除了对于性能很重要之外，某些设备或硬件配置也需要对象对齐。<code>aligned</code> 属性有一个参数，它指定所需的对齐类型。</p>
+<p>下面的示例用于软件暂停（见 ./linux/arch/i386/mm/init.c）。在需要页面对齐时，定义 <code>PAGE_SIZE</code> 对象。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> __nosavedata swsusp_pg_dir[PAGE_SIZE]</span><br><span class="line">    __attribute__ ((aligned (PAGE_SIZE)));</span><br></pre></td></tr></table></figure>
+
+<p>例 7 中的示例说明关于优化的两点：</p>
+<ul>
+<li><code>packed</code> 属性打包一个结构的元素，从而尽可能减少它们占用的空间。这意味着，如果定义一个 <code>char</code> 变量，它占用的空间不会超过一字节（8 位）。位字段压缩为一位，而不会占用更多存储空间。</li>
+<li>这段源代码使用一个 <code>__attribute__</code> 声明进行优化，它用逗号分隔的列表定义多个属性。</li>
+</ul>
+<p>例7. 结构打包和设置多个属性</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">swsusp_header</span> &#123;</span></span><br><span class="line">	<span class="keyword">char</span> reserved[PAGE_SIZE - <span class="number">20</span> - <span class="keyword">sizeof</span>(<span class="keyword">swp_entry_t</span>)];</span><br><span class="line">	<span class="keyword">swp_entry_t</span> image;</span><br><span class="line">	<span class="keyword">char</span>    orig_sig[<span class="number">10</span>];</span><br><span class="line">	<span class="keyword">char</span>    sig[<span class="number">10</span>];</span><br><span class="line">&#125;__attribute__((packed, aligned(PAGE_SIZE))) swsusp_header;</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<p>Source From:</p>
+<p><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-gcc-hacks/index.html#artrelatedtopics">Linux 内核中的 GCC 特性</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C</a>
+          
+            <a href="/tags/GCC/" rel="tag"># GCC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/" rel="next" title="并行排序">
+                <i class="fa fa-chevron-left"></i> 并行排序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/05/11/%E5%B0%B8%E6%A3%80%E6%8A%A5%E5%91%8A/" rel="prev" title="尸检报告">
+                尸检报告 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%80%A7%E6%89%A9%E5%B1%95"><span class="nav-number">1.</span> <span class="nav-text">功能性扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">类型发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8C%83%E5%9B%B4%E6%89%A9%E5%B1%95"><span class="nav-number">1.2.</span> <span class="nav-text">范围扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E9%95%BF%E5%BA%A6%E7%9A%84%E6%95%B0%E7%BB%84"><span class="nav-number">1.3.</span> <span class="nav-text">零长度的数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E8%B0%83%E7%94%A8%E5%9C%B0%E5%9D%80"><span class="nav-number">1.4.</span> <span class="nav-text">判断调用地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E6%A3%80%E6%B5%8B"><span class="nav-number">1.5.</span> <span class="nav-text">常量检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%B1%9E%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">函数属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%80%A7%E6%89%A9%E5%B1%95"><span class="nav-number">2.</span> <span class="nav-text">优化性扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E6%8F%90%E7%A4%BA"><span class="nav-number">2.1.</span> <span class="nav-text">分支预测提示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E8%AF%BB%E5%8F%96"><span class="nav-number">2.2.</span> <span class="nav-text">预读取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%B1%9E%E6%80%A7"><span class="nav-number">2.3.</span> <span class="nav-text">变量属性</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Galois</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

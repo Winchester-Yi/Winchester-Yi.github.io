@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="异常值检测,数据清洗," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在数据集中，异常值(Outlier or Anomaly)作为不寻常的表征点，无利于后面算法对于数据集中模式的挖掘，甚至会极大地影响性能，或者直接用于一些异常检测的场景，如欺诈检测、安全检测等.异常值检测是数据清洗里非常重要的一步.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异常值检测">
+<meta property="og:url" content="http://example.com/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="Hyper">
+<meta property="og:description" content="在数据集中，异常值(Outlier or Anomaly)作为不寻常的表征点，无利于后面算法对于数据集中模式的挖掘，甚至会极大地影响性能，或者直接用于一些异常检测的场景，如欺诈检测、安全检测等.异常值检测是数据清洗里非常重要的一步.">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/xiangtu.png">
+<meta property="og:image" content="http://example.com/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/algorithm.png">
+<meta property="article:published_time" content="2019-04-14T05:05:00.000Z">
+<meta property="article:modified_time" content="2019-06-20T01:52:22.831Z">
+<meta property="article:author" content="Galois">
+<meta property="article:tag" content="异常值检测">
+<meta property="article:tag" content="数据清洗">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/xiangtu.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2019/04/14/异常值检测/"/>
+
+
+
+
+
+  <title>异常值检测 | Hyper</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">异常值检测</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-14T13:05:00+08:00">
+                2019-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在数据集中，异常值(Outlier or Anomaly)作为不寻常的表征点，无利于后面算法对于数据集中模式的挖掘，甚至会极大地影响性能，或者直接用于一些异常检测的场景，如欺诈检测、安全检测等.异常值检测是<strong>数据清洗</strong>里非常重要的一步.</p>
+<span id="more"></span>
+
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>一般可以利用聚类的思想，定义为<strong>分布稀疏且离密度高的群体较远的点</strong><br>通常异常值出现的原因有以下几种：</p>
+<ul>
+<li>数据收集过程出现问题，录入错误</li>
+<li>数据测量误差(人为、测量仪器)</li>
+<li>数据随机误差(数据自身)</li>
+</ul>
+<h1 id="如何检测"><a href="#如何检测" class="headerlink" title="如何检测"></a>如何检测</h1><h2 id="基于统计"><a href="#基于统计" class="headerlink" title="基于统计"></a>基于统计</h2><h3 id="1-基于高斯分布的异常点检测"><a href="#1-基于高斯分布的异常点检测" class="headerlink" title="1. 基于高斯分布的异常点检测"></a>1. <strong>基于高斯分布的异常点检测</strong></h3><p>根据已有的数据集，建立高斯分布的模型，通过新数据与已知分布的差异判断是否属于异常值，</p>
+<p>$$<br>p(x)=\frac{1}{\sqrt{2 \pi} \sigma^{2}} \exp \left(-\frac{x-\mu^{2}}{2 \sigma^{2}}\right)<br>$$</p>
+<p>可以扩展到多维或者多元分布.3$\sigma$原则也是属于高斯分布判断方法的一种，在这里异常值被定义为，<strong>其值与平均值的偏差超过三倍标准差的值</strong>，即</p>
+<p>$$<br>P(|x-\mu|\gt3\sigma)\le0.003<br>$$</p>
+<h3 id="2-四分位数"><a href="#2-四分位数" class="headerlink" title="2. 四分位数"></a>2. <strong>四分位数</strong></h3><p>$Q_1$：上四分位数<br>$Q_2$：下四分位数<br>$IQR=Q_1-Q_2$:上下四位分数之差，包含了全部观测值的一半</p>
+<p>四分位数的思想就是，通过估计数据集中可能的最小和最大值，以此判断异常值，估计可能的最小和最大值为<br>$$<br>min=Q_2-k<em>IOR\<br>max=Q_1+k</em>IOR<br>$$<br>$k$的取值取决于你对异常值的忍耐程度，一般取$k=1.5$.</p>
+<p><img src="%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/xiangtu.png"></p>
+<h3 id="3-各类统计量"><a href="#3-各类统计量" class="headerlink" title="3. 各类统计量"></a>3. 各类统计量</h3><p>更多的还有基于各类统计量来检测多元离群点，例如$\chi^2$检验、$t$检验等.</p>
+<h3 id="4-基于主成分分析的矩阵分解方法"><a href="#4-基于主成分分析的矩阵分解方法" class="headerlink" title="4. 基于主成分分析的矩阵分解方法"></a>4. 基于主成分分析的矩阵分解方法</h3><p>这种方法经过主成分分析分解，再进行重构，通过异常值在主成分分量上的偏差更大来判断是否异常.</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIzODExMDE5MA==&mid=2694182465&idx=1&sn=c644809b757bb1c3f0439eae4bb2f78c#rd">https://mp.weixin.qq.com/s?__biz=MzIzODExMDE5MA==&amp;mid=2694182465&amp;idx=1&amp;sn=c644809b757bb1c3f0439eae4bb2f78c#rd</a></p>
+<h3 id="5-Seasonal-Hybrid-ESD算法"><a href="#5-Seasonal-Hybrid-ESD算法" class="headerlink" title="5. Seasonal Hybrid ESD算法"></a>5. Seasonal Hybrid ESD算法</h3><p>Twitter的异常检测算法(Seasonal Hybrid ESD)<br>先用STL把序列分解，考察残差项。假定这一项符合正态分布，然后就可以用Generalized ESD提取离群点<br><strong>待续…….</strong><br><a target="_blank" rel="noopener" href="https://anomaly.io/blog/">https://anomaly.io/blog/</a></p>
+<h2 id="基于距离"><a href="#基于距离" class="headerlink" title="基于距离"></a>基于距离</h2><p>利用聚类的思想，对数据进行聚类.，排除距离中心最远的$N​$个点，一般的方法有，<strong>kmeans、knn、DBSCAN</strong>等</p>
+<h3 id="局部异常因子LOF-Local-Outlier-Factor-算法"><a href="#局部异常因子LOF-Local-Outlier-Factor-算法" class="headerlink" title="局部异常因子LOF(Local Outlier Factor)算法"></a>局部异常因子LOF(Local Outlier Factor)算法</h3><p>首先定义以下概念，</p>
+<ol>
+<li><p><strong>$k$邻近距离(k-distance)</strong><br> 定义为，在距离数据点$p$最近的几个点中第$k$个最近的点与点$p$之间的距离，记为$d_k(p)$</p>
+</li>
+<li><p><strong>可达距离</strong><br> 定义为，给定邻近距离参数$k$时，点$p$与另一点$o$的可达距离为，点$o$的$k$邻近距离与$distance(p,o)$两个距离比较的最大值，<br>$$<br>rech-dist_k(p, o)=\max{d_k(o),distance(p,o)}<br>$$</p>
+</li>
+<li><p><strong>局部可达密度(local rechability density)</strong><br> 基于可达距离，首先与点$p$距离小于$d_k(p)$的数据称为它的$k$近邻，记为$N_k(p)$，点$p$的局部可达密度则定义为，点$p$到$k$近邻数据点的平均可达距离的倒数<br>$$<br>lrd_k(p) = 1 / (\frac{\sum_{o \in N_{k}(p)} reach-dist_k(p,o)}{|N_{k}(p)|})<br>$$<br>局部可达密度的意义就是，一个数据点跟其他点比较疏远的话，那么显然它的局部可达密度就小，即密度越低的话，就越有可能是离群点.</p>
+</li>
+<li><p><strong>局部异常因子(local outlier factor)</strong><br> LOF算法为允许数据分布不均匀、密度不同的情况，采取了与周围近邻点相对密度来定义局部异常因子<br> 点$p$的局部相对密度（局部异常因子）为点$p$的$k近邻$的平均局部可达密度跟数据点p的局部可达密度的比值</p>
+</li>
+</ol>
+<p>$$<br>LOF_k(p)=\frac{\sum_{o \in N_{k}(p)} \frac{lrd_k(o)}{lrd_k(p)}}{|N_k(p)|} = \frac{\sum_{o \in N_k(p)} lrd_k(o)}{|N_k(p)|} / lrd_k(p)<br>$$</p>
+<p>如果数据点$p$的LOF得分小于1，表明数据点处在一个相对密集的区域，不大可能是一个异常点；如果数据点$p​$的LOF得分远大于1，表明数据点跟其他点比较疏远，很有可能是一个异常点.<br>别人的实现<br><a target="_blank" rel="noopener" href="https://github.com/damjankuznar/pylof">https://github.com/damjankuznar/pylof </a><br><a target="_blank" rel="noopener" href="https://github.com/wangyibo360/pylof">https://github.com/wangyibo360/pylof </a></p>
+<p><strong>注意点</strong><br>LOF算法中关于局部可达密度的定义其实暗含了一个假设，即：不存在大于等于$k$个重复的点。当这样的重复点存在的时候，这些点的平均可达距离为零，局部可达密度就变为无穷大，会给计算带来一些麻烦。在实际应用时，为了避免这样的情况出现，可以不考虑重复的情况。或者，还可以考虑给可达距离都加一个很小的值，避免可达距离等于零。<br>LOF 算法需要计算数据点两两之间的距离，造成整个算法时间复杂度为 $O(n^2)$ 。为了提高算法效率，FastLOF （Goldstein，2012）先将整个数据随机的分成多个子集，然后在每个子集里计算 LOF 值。对于那些 LOF异常得分小于等于1的，从数据集里剔除，剩下的在下一轮寻找更合适的近邻，并更新LOF值。</p>
+<h3 id="孤立森林iForest-Isolation-Forest"><a href="#孤立森林iForest-Isolation-Forest" class="headerlink" title="孤立森林iForest(Isolation Forest)"></a>孤立森林iForest(Isolation Forest)</h3><p>孤立森林基于异常值是孤立的离群点，正常值则聚集在密度较高的区域.iForst的重点就在于，如何<strong>快速有效</strong>地判断该点是在离群较远的地方还是聚集在某一块区域.其操作就是，通过随机切分超平面，不断二分数据空间，直到所有的数据都被单独地划分到某一子空间，直觉上来说，离群点会很快被单独划分到一个子空间里，而数据聚集的区域往往需要划分更多次，这一行为就体现在数据点在二叉树的高度的高低上.iForest就是基于ensemble的方法，切分多个独立的孤立树，最后给一个总的判断.其优点是具有线性时间复杂度，但是不适合维度过高.<br>更具体的可以参考<a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/123685?spm=a2c4e.11153940.blogcont152627.11.665b4d2bDfCqOO">机器学习-异常检测算法（一）：Isolation Forest</a>，以及<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5af3c66e0410?utm_campaign=maleskine">iForest （Isolation Forest）孤立森林 异常检测 入门篇</a>，同时这个算法在sklearn(<a target="_blank" rel="noopener" href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.ensemble">sklearn.ensemble.IsolationForest</a>)里面已经有相应的实现.</p>
+<p><img src="%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/algorithm.png"></p>
+<h2 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h2><ul>
+<li>异常值可能是被正确记录的，本身就反应了数据集的某种模式，需要保留下来</li>
+<li>异常值被记录错误，可以删除</li>
+<li>异常值被错误记录，也可以修正</li>
+</ul>
+<hr>
+<p>以下是一些讨论和偏学术的文章资料</p>
+<p>1.<a target="_blank" rel="noopener" href="http://cucis.ece.northwestern.edu/projects/DMS/publications/AnomalyDetection.pdf">Anomaly Detection : A Survey</a><br>2.<a target="_blank" rel="noopener" href="https://rd.springer.com/content/pdf/10.1007%2F978-3-319-47578-3.pdf">Outlier Analysis</a><br>3.<a target="_blank" rel="noopener" href="http://www.kdd.org/kdd2016/topics/view/outlier-and-anomaly-detection">KDD016-topics-outlier-and-anomaly-detection</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/" rel="tag"># 异常值检测</a>
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag"># 数据清洗</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/14/%E5%9F%BA%E7%A1%80%E7%BB%9F%E8%AE%A1%E5%AD%A6%E6%80%BB%E7%BB%93/" rel="next" title="基础统计学总结">
+                <i class="fa fa-chevron-left"></i> 基础统计学总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/14/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%85%B8%E5%9E%8B%E9%87%8F/" rel="prev" title="时间复杂度典型量">
+                时间复杂度典型量 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%A3%80%E6%B5%8B"><span class="nav-number">2.</span> <span class="nav-text">如何检测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BB%9F%E8%AE%A1"><span class="nav-number">2.1.</span> <span class="nav-text">基于统计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E4%BA%8E%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E5%BC%82%E5%B8%B8%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">1. 基于高斯分布的异常点检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%9B%9B%E5%88%86%E4%BD%8D%E6%95%B0"><span class="nav-number">2.1.2.</span> <span class="nav-text">2. 四分位数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%84%E7%B1%BB%E7%BB%9F%E8%AE%A1%E9%87%8F"><span class="nav-number">2.1.3.</span> <span class="nav-text">3. 各类统计量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%9F%BA%E4%BA%8E%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E7%9A%84%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.4.</span> <span class="nav-text">4. 基于主成分分析的矩阵分解方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Seasonal-Hybrid-ESD%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.5.</span> <span class="nav-text">5. Seasonal Hybrid ESD算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%B7%9D%E7%A6%BB"><span class="nav-number">2.2.</span> <span class="nav-text">基于距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E5%BC%82%E5%B8%B8%E5%9B%A0%E5%AD%90LOF-Local-Outlier-Factor-%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">局部异常因子LOF(Local Outlier Factor)算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A4%E7%AB%8B%E6%A3%AE%E6%9E%97iForest-Isolation-Forest"><span class="nav-number">2.2.2.</span> <span class="nav-text">孤立森林iForest(Isolation Forest)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3"><span class="nav-number">2.3.</span> <span class="nav-text">如何解决</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Galois</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

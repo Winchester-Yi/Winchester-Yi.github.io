@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="矩阵论,共轭," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="矩阵是数学中的一个重要的基本概念，是代数学的一个主要研究对象，也是数学研究和应用的一个重要工具。“矩阵”这个词是由西尔维斯特首先使用的，他是为了将数字的矩形阵列区别于行列式而发明了这个述语。而实际上，矩阵这个课题在诞生之前就已经发展的很好了。从行列式的大量工作中明显的表现出来，为了很多目的，不管行列式的值是否与问题有关，方阵本身都可以研究和使用，矩阵的许多基本性质也是在行列式的发展中建立起来的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="矩阵论基础">
+<meta property="og:url" content="http://example.com/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Hyper">
+<meta property="og:description" content="矩阵是数学中的一个重要的基本概念，是代数学的一个主要研究对象，也是数学研究和应用的一个重要工具。“矩阵”这个词是由西尔维斯特首先使用的，他是为了将数字的矩形阵列区别于行列式而发明了这个述语。而实际上，矩阵这个课题在诞生之前就已经发展的很好了。从行列式的大量工作中明显的表现出来，为了很多目的，不管行列式的值是否与问题有关，方阵本身都可以研究和使用，矩阵的许多基本性质也是在行列式的发展中建立起来的。">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E6%80%A7%E8%B4%A8.jpg">
+<meta property="article:published_time" content="2019-04-15T05:09:03.000Z">
+<meta property="article:modified_time" content="2019-06-20T01:52:17.450Z">
+<meta property="article:author" content="Galois">
+<meta property="article:tag" content="矩阵论">
+<meta property="article:tag" content="共轭">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E6%80%A7%E8%B4%A8.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2019/04/15/矩阵论基础/"/>
+
+
+
+
+
+  <title>矩阵论基础 | Hyper</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">矩阵论基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-15T13:09:03+08:00">
+                2019-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index">
+                    <span itemprop="name">数学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>矩阵是数学中的一个重要的基本概念，是代数学的一个主要研究对象，也是数学研究和应用的一个重要工具。“矩阵”这个词是由西尔维斯特首先使用的，他是为了将数字的矩形阵列区别于行列式而发明了这个述语。而实际上，矩阵这个课题在诞生之前就已经发展的很好了。从行列式的大量工作中明显的表现出来，为了很多目的，不管行列式的值是否与问题有关，方阵本身都可以研究和使用，矩阵的许多基本性质也是在行列式的发展中建立起来的。</p>
+<p>1855 年，埃米特(C.Hermite，1822～1901)证明了别的数学家发现的一些矩阵类的特征根的特殊性质，如现在称为埃米特矩阵的特征根性质等。后来，克莱伯施(A.Clebsch，1831～1872)、布克海姆(A.Buchheim)等证明了对称矩阵的特征根性质。泰伯(H.Taber)引入矩阵的迹的概念并给出了一些有关的结论。 在矩阵论的发展史上，弗罗伯纽斯(G.Frobenius,1849-1917)的贡献是不可磨灭的。他讨论了最小多项式问题，引进了矩阵的秩、不变因子和初等因子、正交矩阵、矩阵的相似变换、合同矩阵等概念，以合乎逻辑的形式整理了不变因子和初等因子的理论，并讨论了正交矩阵与合同矩阵的一些重要性质。 1854 年，约当研究了矩阵化为标准型的问题。1892年，梅茨勒(H.Metzler)引进了矩阵的超越函数概念并将其写成矩阵的幂级数的形式。傅立叶、西尔和庞加莱的著作中还讨论了无限阶矩阵问题，这主要是适用方程发展的需要而开始的。</p>
+<span id="more"></span>
+
+<h1 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h1><h2 id="矩阵类型"><a href="#矩阵类型" class="headerlink" title="矩阵类型"></a>矩阵类型</h2><p>向量的类型根据元素的实际意义不同可以分为，</p>
+<ol>
+<li><p>物理向量</p>
+<p>泛指既有幅值，又有方向的物理量，如速度、加速度、位移等。</p>
+</li>
+<li><p>几何向量</p>
+<p>为了将物理向量可视化，常用带方向的线段表示。这种有向线段出称为几何向量。</p>
+</li>
+<li><p>代数向量</p>
+<p>几何向量可以用代数形式表示。例如，若平面上的几何向量$v=\vec{ab}$中点a的坐标为$(a_1,a_2)$,点b的坐标为$(b_1,b_2)$，则该几何向量可以表示为代数形式$\begin{bmatrix}<br>b_1-a_1\<br>b_2-a_2\<br>\end{bmatrix}<br>​$</p>
+</li>
+</ol>
+<p>其中，根据元素的类型不同，代数向量又可以分为以下三种，</p>
+<ol>
+<li><p>常数向量</p>
+<p>向量中的元素为实数或复数</p>
+</li>
+<li><p>函数向量</p>
+<p>向量中的元素包含函数值，如$\mathbf{x}=[1,x,x^2,…,x^n]^T$</p>
+</li>
+<li><p>随机向量</p>
+<p>向量中的元素为随机变量或随机过程，如$\mathbf{x}=[x_1(n),x_2(n),…,x_m(n)]^T$，其中$x_1(n),x_2(n),…,x_m(n)$是$m$个随机过程或随机信号</p>
+</li>
+</ol>
+<h2 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h2><h3 id="转置、共轭、共轭转置、加法、乘法和求逆"><a href="#转置、共轭、共轭转置、加法、乘法和求逆" class="headerlink" title="转置、共轭、共轭转置、加法、乘法和求逆"></a>转置、共轭、共轭转置、加法、乘法和求逆</h3><p>矩阵的基本运算包括矩阵的<strong>转置、共轭、共轭转置、加法、乘法和求逆</strong><br>$$<br>A=\begin{bmatrix}{a_{11}} &amp; {a_{12}} &amp; {\cdots} &amp; {a_{1 m}} \ {a_{21}} &amp; {a_{22}} &amp; {\cdots} &amp; {a_{2 m}} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{m 1}} &amp; {a_{m 2}} &amp; {\cdots} &amp; {a_{m m}}\end{bmatrix}<br>$$</p>
+<ol>
+<li>矩阵$A$的<strong>转置</strong>记为$A^T$，其元素定义为$[A^T]<em>{ij}=a</em>{ji}$，</li>
+</ol>
+<p>$$<br>A^T=\begin{bmatrix}{a_{11}} &amp; {a_{21}} &amp; {\cdots} &amp; {a_{m1}} \ {a_{12}} &amp; {a_{22}} &amp; {\cdots} &amp; {a_{m2}} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{1m}} &amp; {a_{2m}} &amp; {\cdots} &amp; {a_{m m}}\end{bmatrix}<br>$$</p>
+<ol start="2">
+<li>矩阵$A$的<strong>共轭</strong>记为$A^*$，其元素定义为$[A^*]<em>{ij}=a</em>{ij}^*$，</li>
+</ol>
+<p>$$<br>A^*=\begin{bmatrix}{a_{11}^*} &amp; {a_{12}^*} &amp; {\cdots} &amp; {a_{1 m}^*} \ {a_{21}^*} &amp; {a_{22}^*} &amp; {\cdots} &amp; {a_{2 m}^*} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{m 1}^*} &amp; {a_{m 2}^*} &amp; {\cdots} &amp; {a_{m m}^*}\end{bmatrix}<br>$$</p>
+<ol start="3">
+<li>矩阵$A$的<strong>共轭转置</strong>记为$A^H$，其元素定义为$[A^H]<em>{ij}=a</em>{ji}^*$，</li>
+</ol>
+<p>$$<br>A^T=\begin{bmatrix}{a_{11}^*} &amp; {a_{21}^*} &amp; {\cdots} &amp; {a_{m1}^*} \ {a_{12}^*} &amp; {a_{22}^*} &amp; {\cdots} &amp; {a_{m2}^*} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{1m}^*} &amp; {a_{2m}^*} &amp; {\cdots} &amp; {a_{m m}^*}\end{bmatrix}<br>$$<br>   共轭转置又被称为Hermitian伴随、Hermitian转置或Hermitian共轭，$A=A^T$的实方阵称为对称矩阵，$A=A^H$的复方阵称为Hermitian矩阵</p>
+<ol start="4">
+<li><p>方阵$A$的<strong>逆矩阵</strong>记为$A^{-1}$，$A^{-1}$被定义为满足以下关系$AA^{-1}=AA^{-1}=\mathbf{I}$</p>
+</li>
+<li><p>加法与乘法</p>
+<ul>
+<li><p>两个$m\times n$矩阵$A、B$的<strong>加法</strong>，$[A+B]<em>{ij}=a</em>{ij}+b_{ij}$</p>
+</li>
+<li><p>$m\times n$大小的矩阵$A$与$1\times n$大小的向量$x=[x_1,…,x_n]$相乘，$[Ax]<em>i=\sum</em>{j=1}^na_{ij}x_j,\quad i=1,…,m$</p>
+</li>
+<li><p>$m\times n​$大小的矩阵$A​$与$n\times r​$大小的矩阵$B​$相乘，$[AB]<em>{ij}=\sum</em>{k=1}^na_{ik}b_{kj},\quad i=1,…,m;j=1,…,r​$</p>
+</li>
+</ul>
+<p><code>需要注意的是，一般来说，矩阵乘积是不满足交换律的</code></p>
+</li>
+</ol>
+<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><p>关于矩阵中转置、共轭、共轭转置、求逆的性质</p>
+<ol>
+<li><p>分配律</p>
+<p>$(A+B)^*=A^*+B^*,\quad (A+B)^T=A^T+B^T,\quad (A+B)^H=A^H+B^H​$</p>
+</li>
+<li><p>矩阵乘积中转置、共轭转置、求逆的性质</p>
+<p>$(AB)^T=B^TA^T,\quad (AB)^H=B^HA^H,\quad (AB)^{-1}=B^{-1}A^{-1}​$</p>
+</li>
+<li><p>转置、共轭、共轭转置与求逆交换</p>
+<p>$(A^*)^{-1}=(A^{-1})^*,\quad (A^T)^{-1}=(A^{-1})^T,\quad (A^H)^{-1}=(A^{-1})^H$</p>
+</li>
+</ol>
+<h3 id="矩阵函数"><a href="#矩阵函数" class="headerlink" title="矩阵函数"></a>矩阵函数</h3><p>除了上述矩阵的基本运算之外，还有矩阵函数</p>
+<ol>
+<li><p>三角函数<br>$$<br>\begin{aligned} \sin (\boldsymbol{A}) &amp;=\sum_{n=0}^{\infty} \frac{(-1)^{n} \boldsymbol{A}^{2 n+1}}{(2 n+1) !}=\boldsymbol{A}-\frac{1}{3 !} \boldsymbol{A}^{3}+\frac{1}{5 !} \boldsymbol{A}^{5}-\cdots \ \cos (\boldsymbol{A}) &amp;=\sum_{n=0}^{\infty} \frac{(-1)^{n} \boldsymbol{A}^{2 n}}{(2 n) !}=\boldsymbol{I}-\frac{1}{2 !} \boldsymbol{A}^{2}+\frac{1}{4 !} \boldsymbol{A}^{4}-\cdots \end{aligned}<br>$$</p>
+</li>
+<li><p>指数函数<br>$$<br>\begin{aligned} \mathrm{e}^{A} &amp;=\sum_{n=0}^{\infty} \frac{1}{n !} \boldsymbol{A}^{n}=\boldsymbol{I}+\boldsymbol{A}+\frac{1}{2} \boldsymbol{A}^{2}+\frac{1}{3 !} \boldsymbol{A}^{3}+\cdots \ \mathrm{e}^{-\boldsymbol{A}} &amp;=\sum_{n=0}^{\infty} \frac{1}{n !}(-1)^{n} \boldsymbol{A}^{n}=\boldsymbol{I}-\boldsymbol{A}+\frac{1}{2} \boldsymbol{A}^{2}-\frac{1}{3 !} \boldsymbol{A}^{3}+\cdots \ \mathrm{e}^{\boldsymbol{A} t} &amp;=\boldsymbol{I}+\boldsymbol{A} t+\frac{1}{2} \boldsymbol{A}^{2} t^{2}+\frac{1}{3 !} \boldsymbol{A}^{3} t^{3}+\cdots \end{aligned}<br>$$</p>
+</li>
+<li><p>对数函数<br>$$<br>\ln (I+A)=\sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} A^{n}=A-\frac{1}{2} A^{2}+\frac{1}{3} A^{3}-\cdots<br>$$</p>
+</li>
+<li><p>矩阵导数<br>$$<br>\frac{\mathrm{d} \boldsymbol{A}}{\mathrm{d} t}=\dot{\boldsymbol{A}}=\left[ \begin{array}{cccc}{\frac{\mathrm{d} a_{11}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{12}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{1 n}}{\mathrm{d} t}} \ {\frac{\mathrm{d} a_{21}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{22}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{2 n}}{\mathrm{d} t}} \ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \ {\frac{\mathrm{d} a_{m 1}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{m 2}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{m n}}{\mathrm{d} t}}\end{array}\right]<br>$$</p>
+</li>
+<li><p>矩阵积分<br>$$<br>\int \boldsymbol{A} \mathrm{d} t=\left[ \begin{array}{cccc}{\int a_{11} \mathrm{d} t} &amp; {\int a_{12} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{1 n} \mathrm{d} t} \ {a_{21} \mathrm{d} t} &amp; {\int a_{22} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{2 n} \mathrm{d} t} \ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \ {\int a_{m 1} \mathrm{d} t} &amp; {\int a_{m 2} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{m n} \mathrm{d} t}\end{array}\right]<br>$$</p>
+</li>
+</ol>
+<h2 id="特殊矩阵"><a href="#特殊矩阵" class="headerlink" title="特殊矩阵"></a>特殊矩阵</h2><p>对角矩阵、零矩阵、单位矩阵</p>
+<h3 id="幂等矩阵"><a href="#幂等矩阵" class="headerlink" title="幂等矩阵"></a>幂等矩阵</h3><p>幂等矩阵$A$具有以下性质：</p>
+<p><img src="%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E6%80%A7%E8%B4%A8.jpg"></p>
+<h3 id="幂单矩阵"><a href="#幂单矩阵" class="headerlink" title="幂单矩阵"></a>幂单矩阵</h3><p>又被称为对合矩阵，若$A^2=AA=\mathbf{I}​$，若$A​$为幂单矩阵，则函数$f(\cdot)​$具有以下性质：<br>$$<br>f(s \boldsymbol{I}+t \boldsymbol{A})=\frac{1}{2}[(\boldsymbol{I}+\boldsymbol{A}) f(s+t)+(\boldsymbol{I}-\boldsymbol{A}) f(s-t)]<br>$$<br>其中，幂等矩阵和幂单矩阵也有关系，矩阵$A$是幂单矩阵，当且仅当$\frac{1}{2}\boldsymbol({A}+\boldsymbol{I})$</p>
+<h3 id="幂零矩阵"><a href="#幂零矩阵" class="headerlink" title="幂零矩阵"></a>幂零矩阵</h3><p>方阵$A$被称为幂零矩阵，若$A^2=AA=\boldsymbol{O}$，若$A$为幂单矩阵，则函数$f(\cdot)$具有以下性质：<br>$$<br>f(s \boldsymbol{I}+t \boldsymbol{A})=\boldsymbol{I}f(s)+t\boldsymbol{A}f^{\prime}(s)<br>$$</p>
+<hr>
+<p>Source From:</p>
+<p>《矩阵分析与应用》，张贤达</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%9F%A9%E9%98%B5%E8%AE%BA/" rel="tag"># 矩阵论</a>
+          
+            <a href="/tags/%E5%85%B1%E8%BD%AD/" rel="tag"># 共轭</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/14/MathJax%E5%9F%BA%E6%9C%AC%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/" rel="next" title="MathJax基本的使用方式">
+                <i class="fa fa-chevron-left"></i> MathJax基本的使用方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/" rel="prev" title="并行排序">
+                并行排序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5"><span class="nav-number">1.</span> <span class="nav-text">矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">矩阵类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E8%BF%90%E7%AE%97"><span class="nav-number">1.2.</span> <span class="nav-text">矩阵运算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E7%BD%AE%E3%80%81%E5%85%B1%E8%BD%AD%E3%80%81%E5%85%B1%E8%BD%AD%E8%BD%AC%E7%BD%AE%E3%80%81%E5%8A%A0%E6%B3%95%E3%80%81%E4%B9%98%E6%B3%95%E5%92%8C%E6%B1%82%E9%80%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">转置、共轭、共轭转置、加法、乘法和求逆</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%B4%A8"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">性质</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">矩阵函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.</span> <span class="nav-text">特殊矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E7%AD%89%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.1.</span> <span class="nav-text">幂等矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E5%8D%95%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.2.</span> <span class="nav-text">幂单矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E9%9B%B6%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.3.</span> <span class="nav-text">幂零矩阵</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Galois</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

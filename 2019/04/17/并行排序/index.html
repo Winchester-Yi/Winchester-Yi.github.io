@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="排序," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="并行排序算法是计算机并行计算能力大大发展之后，为了提高排序效率而提出的算法。 原有的的排序算法都是给定了数据再进行排序，排序的效率很大程度上取决于数据的好坏，例如快速排序、归并排序。并行排序则是一类完全不同的排序方法，它的所有比较操作都与数据无关。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并行排序">
+<meta property="og:url" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="Hyper">
+<meta property="og:description" content="并行排序算法是计算机并行计算能力大大发展之后，为了提高排序效率而提出的算法。 原有的的排序算法都是给定了数据再进行排序，排序的效率很大程度上取决于数据的好坏，例如快速排序、归并排序。并行排序则是一类完全不同的排序方法，它的所有比较操作都与数据无关。">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E6%AF%94%E8%BE%83%E5%99%A8.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555677542510.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/356px-Batcher_Odd-Even_Mergesort_for_eight_inputs.svg.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555654232064.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E4%BE%8B.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/305px-Batcher_Bitonic_Mergesort_for_eight_inputs.svg.png">
+<meta property="og:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/bitonet6.gif">
+<meta property="article:published_time" content="2019-04-17T02:06:20.000Z">
+<meta property="article:modified_time" content="2019-06-20T01:52:22.573Z">
+<meta property="article:author" content="Galois">
+<meta property="article:tag" content="排序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E6%AF%94%E8%BE%83%E5%99%A8.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2019/04/17/并行排序/"/>
+
+
+
+
+
+  <title>并行排序 | Hyper</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyper</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyper">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">并行排序</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-17T10:06:20+08:00">
+                2019-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机科学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>并行排序算法是计算机并行计算能力大大发展之后，为了提高排序效率而提出的算法。</p>
+<p>原有的的排序算法都是给定了数据再进行排序，排序的效率很大程度上取决于数据的好坏，例如快速排序、归并排序。并行排序则是一类完全不同的排序方法，它的所有比较操作都与数据无关。</p>
+<span id="more"></span>
+
+<p>并行排序的表示方式是排序网络，其主要构件就是<strong>Batcher比较器</strong>，通过组合比较器构建网络来完成排序功能。Batcher比较器指在两个输入端给定输入x,y，再在两个输出端输出最大值$\text{max}{x,y}$和最小值$\text{min}{x,y}$。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E6%AF%94%E8%BE%83%E5%99%A8.png"></p>
+<h1 id="传统排序算法网络"><a href="#传统排序算法网络" class="headerlink" title="传统排序算法网络"></a>传统排序算法网络</h1><p>实际上，传统的某些排序算法（无条件比较的排序算法<a href="%5BOI%E4%B9%8B%E5%A4%96%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF%EF%BC%9A%E7%AE%80%E5%8D%95%E8%B0%88%E8%B0%88%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%5D(http://www.matrix67.com/blog/archives/185)">^1</a>）也可以用网络的形式表示，例如归并排序和快速排序就无法通过比较器构成的电路网络表示，因为无法预先知道后面的条件交换操作会在什么位置进行，换种说法就是，比较器构成的电路网络中必须不考虑输入就确定结构。</p>
+<p>以冒泡排序举例，其核心是依次得出序列中的最值，其网络结构如下图所示（经调整过的冒泡排序网络，因为第$n$轮冒泡和第$n-1$轮冒泡在相差两个时间步后不再相互依赖，因此有一定的流水线并行性）。但是在并行硬件的背景下，可以看出这种排序算法仍有很大的改善空间（网络中的空白很多）。这是由于这类排序依赖于邻近数据的相对大小关系，不能很好地利用并行计算的资源。因此最直接的改良思路就是打破排序过程中数据间的依赖性，由此得到了<strong>奇偶合并网络</strong>和<strong>双调排序网络</strong>。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F.png"><center>冒泡排序网络</center></p>
+<h1 id="奇偶合并网络"><a href="#奇偶合并网络" class="headerlink" title="奇偶合并网络"></a>奇偶合并网络</h1><p>首先考虑奇偶排序方法，该方法主要有三个步骤：</p>
+<ol>
+<li>选取所有奇数列的元素与其右侧相邻的元素进行比较，将较小的元素排序在前面；</li>
+<li>选取所有偶数列的元素与其右侧相邻的元素进行比较，将较小的元素排序在前面；</li>
+<li>重复前面两步，直到所有序列有序为止。</li>
+</ol>
+<p>这是最基础的奇偶排序算法，其网络表示如下，该方法的平均时间复杂度为$O\left(n \log n\right)$</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555677542510.png" alt="1555677542510"><center>奇偶排序算法[^2]</center></p>
+<p>奇偶合并网络就是结合了两个部分：归并排序得到两个有序的子序列，以及最后对两个子序列的合并过程。如下图所示，两个蓝色方框内依次完成归并排序的两层得到两个有序的子序列。最后的合并过程（后面一个红色框），则是首先对所有的奇数项和偶数项分别递归地合并，然后在排序后的第i个偶数项和第i+1个奇数项之间设立Batcher比较器分别进行最后的调整。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/356px-Batcher_Odd-Even_Mergesort_for_eight_inputs.svg.png"></p>
+<p>平均和最差时间复杂度都是$O\left(\log ^{2}(n)\right)$，空间复杂度则是$O\left(n \log ^{2}(n)\right)$。奇偶归并网络的Python实现如下，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge</span>(<span class="params">lo, hi, r</span>):</span></span><br><span class="line">    step = r * <span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> step &lt; hi - lo:</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo, hi, step)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo + r, hi, step)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> [(i, i + r) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(lo + r, hi - r, step)]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">yield</span> (lo, lo + r)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge_sort_range</span>(<span class="params">lo, hi</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot; sort the part of x with indices between lo and hi.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Note: endpoints (lo and hi) are included.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> (hi - lo) &gt;= <span class="number">1</span>:</span><br><span class="line">        <span class="comment"># if there is more than one element, split the input</span></span><br><span class="line">        <span class="comment"># down the middle and first sort the first and second</span></span><br><span class="line">        <span class="comment"># half, followed by merging them.</span></span><br><span class="line">        mid = lo + ((hi - lo) // <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(lo, mid)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(mid + <span class="number">1</span>, hi)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo, hi, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge_sort</span>(<span class="params">length</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot; &quot;length&quot; is the length of the list to be sorted.</span></span><br><span class="line"><span class="string">    Returns a list of pairs of indices starting with 0 &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(<span class="number">0</span>, length - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compare_and_swap</span>(<span class="params">x, a, b</span>):</span></span><br><span class="line">    <span class="keyword">if</span> x[a] &gt; x[b]:</span><br><span class="line">        x[a], x[b] = x[b], x[a]</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="双调排序网络"><a href="#双调排序网络" class="headerlink" title="双调排序网络"></a>双调排序网络</h1><p>1968年，肯特州立大学的计算机教授Kenneth Batcher设计出一种基于比较单元的电路，可以用$0.5\log_2^n\cdot(\log_2^n+1)​$并行时间步完成长度为$n​$的序列排序，并命名为双调合并网络（bitonic merger）。其中，双调序列定义为一个先单调递增再单调递减（或者先单调递减再单调递增）的序列。即存在一个$0 \leq k \leq n-1​$，使得$&lt;a_{0}, a_{1}, \dots, a_{k-1}&gt; ​$为升序序列，$&lt;a_{k}, a_{k+1}, \dots, a_{n-1}&gt;​$为降序序列。</p>
+<p>从以上定义可以推出双调序列具有的一个特点，即：如果$n​$为偶数，且$&lt;a_{0}, a_{1}, \dots, a_{n / 2-1}&gt;​$为升序序列，$&lt;a_{0}, a_{1}, \dots, a_{n / 2-1}&gt;​$为降序序列，则以下两个序列都是双调序列，</p>
+<p>$$S_{1}=&lt;\min \left(a_{0}, a_{n / 2}\right), \min \left(a_{1}, a_{n / 2+1}\right), \dots, \min \left(a_{n / 2-1}, a_{n-1}\right)&gt;​$$</p>
+<p>$$S_{2}=&lt;\max\left(a_{0}, a_{n / 2}\right), \max\left(a_{1}, a_{n / 2+1}\right), \dots, \max\left(a_{n / 2-1}, a_{n-1}\right)&gt;$$</p>
+<p>借助以上推论可以得到<strong>双调归并排序</strong>的算法，示例如下图所示，</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555654232064.png"></p>
+<p>上述归并排序算法的电路网络可以表示如下图（16路输入），</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.png" alt="双调归并排序"></p>
+<p>那么现在就有一个问题是如何得到最初的双调序列（初始序列），这个部分就是通过下图的红框部分完成的，再拼接上双调归并排序的部分，可以看出整个双调排序网络都是基于Batcher比较器搭建而成。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E4%BE%8B.png"><center>双调排序网络分析[^3]</center></p>
+<p>下面这个是一个8输入的双调排序网络示例，可以看出也是由这两个部分组成。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/305px-Batcher_Bitonic_Mergesort_for_eight_inputs.svg.png" alt="双调排序网络"><center>8输入的双调排序网络示例</center></p>
+<p>考虑双调排序网络的时间复杂度，因为该方法不依赖数据特性，最差时间复杂度和最好时间复杂度都是$O\left(\log ^{2}(n)\right)$，空间复杂度则是$O\left(n \log ^{2}(n)\right)$。</p>
+<p>双调排序网络的Python实现如下，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_sort</span>(<span class="params">up, x</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        first = bitonic_sort(<span class="literal">True</span>, x[:<span class="built_in">len</span>(x) // <span class="number">2</span>])</span><br><span class="line">        second = bitonic_sort(<span class="literal">False</span>, x[<span class="built_in">len</span>(x) // <span class="number">2</span>:])</span><br><span class="line">        <span class="keyword">return</span> bitonic_merge(up, first + second)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_merge</span>(<span class="params">up, x</span>):</span> </span><br><span class="line">    <span class="comment"># assume input x is bitonic, and sorted list is returned </span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        bitonic_compare(up, x)</span><br><span class="line">        first = bitonic_merge(up, x[:<span class="built_in">len</span>(x) // <span class="number">2</span>])</span><br><span class="line">        second = bitonic_merge(up, x[<span class="built_in">len</span>(x) // <span class="number">2</span>:])</span><br><span class="line">        <span class="keyword">return</span> first + second</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_compare</span>(<span class="params">up, x</span>):</span></span><br><span class="line">    dist = <span class="built_in">len</span>(x) // <span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(dist):  </span><br><span class="line">        <span class="keyword">if</span> (x[i] &gt; x[i + dist]) == up:</span><br><span class="line">            x[i], x[i + dist] = x[i + dist], x[i] <span class="comment">#swap</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0-1原理证明"><a href="#0-1原理证明" class="headerlink" title="0-1原理证明"></a>0-1原理证明</h1><p>那么给定一个排序网络，如何确定它是真的能够正确地排序任意输入呢？<strong>0-1原理（0-1 Principle）</strong>是由计算机教授<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E5%BE%B7%E7%BA%B3">高德纳</a>（Donald Ervin Knuth）提出来的，他在《<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%89%BA%E6%9C%AF">计算机程序设计艺术</a>》的第三卷5.3.4节：<strong>排序与选择</strong>中，提出并论证了这个原理。该原理叙述如下：</p>
+<p><code>如果一个排序网络能够正确地对任何0-1序列排序，那么它就能对任意数组成的任意序列正确排序。</code></p>
+<p>因此为了验证一个输入排序网络的正确性，我们不必检验所有数字构成的任意长为n的序列，而只需检验 $2^{n}$个0-1序列就足以验证排序网络是否能正确排序了。这篇文章通过数学归纳法证明了奇偶合并网络能够对任何0-1序列排序，也就证明了它就能对任意数组成的任意序列正确排序。<a href="%5BOI%E4%B9%8B%E5%A4%96%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF%EF%BC%9A%E7%AE%80%E5%8D%95%E8%B0%88%E8%B0%88%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%5D(http://www.matrix67.com/blog/archives/185)">^1</a></p>
+<h1 id="非2次幂输入的排序网络"><a href="#非2次幂输入的排序网络" class="headerlink" title="非2次幂输入的排序网络"></a>非2次幂输入的排序网络</h1><p>需要注意的是，以上两种提到的排序网络都假设了输入是2的整数次幂，保证了排序过程中的划分完整性。但是实际中，这是很难达到的目标，为了解决这个问题，最简单的方法就是填充，通过填充值并在排序结束后剔除以满足这个条件。还有一种方法就是对排序网络进行改进以能够解决任意$n​$的输入[^4]</p>
+<p>输入数据为6的排序网络设置如下，</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/bitonet6.gif"></p>
+<p>该方法的实现如下，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BitonicSorterForArbitraryN</span> <span class="keyword">implements</span> <span class="title">Sorter</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">boolean</span> ASCENDING=<span class="keyword">true</span>;    <span class="comment">// sorting direction</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] a)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.a=a;</span><br><span class="line">        bitonicSort(<span class="number">0</span>, a.length, ASCENDING);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bitonicSort</span><span class="params">(<span class="keyword">int</span> lo, <span class="keyword">int</span> n, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n&gt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> m=n/<span class="number">2</span>;</span><br><span class="line">            bitonicSort(lo, m, !dir);</span><br><span class="line">            bitonicSort(lo+m, n-m, dir);</span><br><span class="line">            bitonicMerge(lo, n, dir);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bitonicMerge</span><span class="params">(<span class="keyword">int</span> lo, <span class="keyword">int</span> n, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n&gt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> m=greatestPowerOfTwoLessThan(n);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i=lo; i&lt;lo+n-m; i++)</span><br><span class="line">                compare(i, i+m, dir);</span><br><span class="line">            bitonicMerge(lo, m, dir);</span><br><span class="line">            bitonicMerge(lo+m, n-m, dir);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">compare</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dir==(a[i]&gt;a[j]))</span><br><span class="line">            exchange(i, j);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">exchange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t=a[i];</span><br><span class="line">        a[i]=a[j];</span><br><span class="line">        a[j]=t;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// n&gt;=2  and  n&lt;=Integer.MAX_VALUE</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">greatestPowerOfTwoLessThan</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> k=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (k&gt;<span class="number">0</span> &amp;&amp; k&lt;n)</span><br><span class="line">            k=k&lt;&lt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> k&gt;&gt;&gt;<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>[^2]:<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort">Batcher odd–even mergesort</a><br>[^3]:<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bitonic_sorter">Bitonic sorter</a><br>[^4]:<a target="_blank" rel="noopener" href="http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/bitonic/oddn.htm">Bitonic sorting network for n not a power of 2</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag"># 排序</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/" rel="next" title="矩阵论基础">
+                <i class="fa fa-chevron-left"></i> 矩阵论基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/22/%E7%94%A8%E4%BA%8EC%E8%AF%AD%E8%A8%80%E7%9A%84GCC%E6%89%A9%E5%B1%95/" rel="prev" title="用于C语言的GCC扩展">
+                用于C语言的GCC扩展 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">传统排序算法网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A5%87%E5%81%B6%E5%90%88%E5%B9%B6%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">奇偶合并网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%8C%E8%B0%83%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">3.</span> <span class="nav-text">双调排序网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0-1%E5%8E%9F%E7%90%86%E8%AF%81%E6%98%8E"><span class="nav-number">4.</span> <span class="nav-text">0-1原理证明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E2%E6%AC%A1%E5%B9%82%E8%BE%93%E5%85%A5%E7%9A%84%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">5.</span> <span class="nav-text">非2次幂输入的排序网络</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Galois</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
