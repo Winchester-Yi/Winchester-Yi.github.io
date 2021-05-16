@@ -1,0 +1,1324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Cox-Box变换</title>
+    <url>/2019/04/14/Cox-Box%E5%8F%98%E6%8D%A2/</url>
+    <content><![CDATA[<p>在<a href="http://hyperparameter.cn/2019/04/14/%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/" title="回归分析的基本假设">《回归分析的基本假设》</a>中提到了回归分析中的基本假设.这里的Box-Cox变换方法能够解决回归模型中的误差项不服从高斯分布的违例问题.</p>
+<span id="more"></span>
+
+<p>通常这种违例情况出现在，误差$\epsilon$与预测变量相关的时候，会影响模型结果的精确度.简单的方法就是通过对$X$进行变换，如</p>
+<p>$$<br>\begin{aligned} y &amp;=\sqrt{x} \ y &amp;=\frac{1}{x} \ y &amp;=\frac{1}{\sqrt{x}} \ y &amp;=\ln (x) \end{aligned}<br>$$</p>
+<p>当P值小于0.003时，由于普通数据转换方法很难使其实现正态化处理，运用Box-Cox变换方法对原数据进行正态化处理就表现出巨大的价值.当P值大于0.003时，两种变换方法均可，但优先考虑普通的平方变换.</p>
+<p>Box-Cox变换是对反应变量y进行变换</p>
+<p>$$<br>y^\lambda=<br>\begin{cases}<br>\frac{y^\lambda-1}{\lambda}, &amp;\lambda \neq 0\<br>\log(y), &amp;\lambda = 0<br>\end{cases}<br>$$</p>
+<p>可以看出，y的Box-Cox变换是一个变换族.$\lambda​$能够决定变换的具体形式.同时上式有暗含的条件即$y&gt;0​$.对于任意取值，则应该改为</p>
+<p>$$y^\lambda<br>= \begin{cases}<br>\frac{(y+c)^\lambda-1}{g\lambda}, &amp;\lambda \neq 0\<br>\frac{\log(y+c)}{g}, &amp;\lambda = 0<br>\end{cases}<br>​$$</p>
+<p><strong>方法优势</strong></p>
+<ul>
+<li>保持原始数据中数据的大小次序</li>
+<li>转换函数连续</li>
+<li>转换函数可导</li>
+<li>函数族各函数之间随参数改变平滑过渡，且都经过一个公共点，以增强不同函数之间的可比性</li>
+<li>函数族内每个函数在公共点两边的变化趋势有一定的对称性</li>
+<li>函数族的曲线是按P值大小排序的，较大的P值对应的函数曲线位于较小P值得上方</li>
+</ul>
+<p><strong>$\lambda$值的确定</strong></p>
+<p>通过最大似然估计或者Bayes方法.</p>
+<p>使用Box-Cox变换族一般都可以保证将数据进行成功的正态变换，但在二分变量或较少水平的等级变量的情况下，不能成功进行转换，这时可以使用广义线性模型，如Logustics模型、Johnson转换等.</p>
+]]></content>
+      <categories>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>回归分析</tag>
+        <tag>BoxCox</tag>
+        <tag>正态化处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo+Next部署问题</title>
+    <url>/2019/03/04/Hexo+Next%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>对于Hexo+Next部署过程中遇到的问题及解决方法记录</p>
+<span id="more"></span>
+
+<h1 id="关于数学公式问题"><a href="#关于数学公式问题" class="headerlink" title="关于数学公式问题"></a>关于数学公式问题</h1><p>Next提供了多种渲染数学公式的方式（<code>mathjax</code>，<code>katex</code>），</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo-rendering-pandoc (or hexo-renderer-kramed) needed to full MathJax support</span><br><span class="line">hexo-renderer-markdown-it-plus (or hexo-renderer-markdown-it with markdown-it-katex plugin) needed to full Katex support.</span><br></pre></td></tr></table></figure>
+
+<p>只需要按照上面说的对应安装插件就行了，但是安装完成后会遇到一个头疼的问题，只要我输入行间公式，就会出现下图中的滑动条，完全不管你是否真的公式太长，这个真的是要逼死强迫症了。</p>
+<p><img src="1551703480089.png"></p>
+<p>最后在<code>next/layout/_third-party/math/mathjax.swig</code>这个文件的末尾中发现对这一格式的定义，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.MathJax_Display &#123;</span><br><span class="line">  overflow-x: scroll;</span><br><span class="line">  overflow-y: hidden;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样定义就意味着$x​$轴不管如何都有这个滚动条，将<code>scroll</code>改为<code>auto</code>就好了</p>
+<p><img src="1551703890901.png"></p>
+]]></content>
+      <categories>
+        <category>效率工具</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MathJax基本的使用方式</title>
+    <url>/2019/04/14/MathJax%E5%9F%BA%E6%9C%AC%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<p>MathJax是一个跨浏览器的JavaScript库，它使用MathML、LaTeX和ASCIIMathML标记在Web浏览器中显示数学符号。MathJax是在Apache许可证下作为开源软件发布的。</p>
+<p>MathJax项目始于2009年，是早期JavaScript数学格式化库jsMath的继承者，由美国数学学会管理。该项目由美国数学学会、设计科学学会、工业和应用数学学会共同发起，并得到美国物理联合会和Stack Exchange等众多资助机构的支持。</p>
+<p>MathJax被arXiv、爱思唯尔的ScienceDirect、MathSciNet、n-category cafe、MathOverflow、维基百科（在后台）、Scholarpedia、Project Euclid期刊、IEEE Xplore、Publons、Coursera和全俄数学门户网站等网站使用。</p>
+<span id="more"></span>
+
+<p>首先为了让Markdown能够解析LaTeX数学表达式，通常情况下，我们需要引入MathJax插件才可能工作。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;script type=<span class="string">&quot;text/javascript&quot;</span>&lt;src=<span class="string">&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&quot;</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="插入公式"><a href="#插入公式" class="headerlink" title="插入公式"></a>插入公式</h2><ul>
+<li><p>如果是在文本中插入公式，则用<code>$...$</code>。</p>
+</li>
+<li><p>如果公式自成段落，则使用<code>$$...$$</code>。</p>
+</li>
+</ul>
+<h2 id="多行公式"><a href="#多行公式" class="headerlink" title="多行公式"></a>多行公式</h2><p>如果要写出多行公式，就使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">\begin&#123;equation&#125;\begin&#123;split&#125; </span><br><span class="line">end&#123;split&#125;\end&#123;equation&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>\\</code> 符号表示换行，再使用<code>&amp;</code>符号表示要对齐的位置，例子如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$ </span><br><span class="line">\begin&#123;aligned&#125;</span><br><span class="line">H(Y | X) &amp;=\sum_&#123;x \in X&#125; p(x) H(Y | X) \\ &amp;=-\sum_&#123;x \in X&#125; p(x) \sum_&#123;y \in Y&#125; p(y | x) \log p(y | x) \\ &amp;=-\sum_&#123;x \in X&#125; \sum_&#123;y \in Y&#125; p(y, x) \log p(y | x) </span><br><span class="line">\end&#123;aligned&#125;</span><br><span class="line"> $$</span><br></pre></td></tr></table></figure>
+
+
+<p>$$<br>\begin{aligned} H(Y | X) &amp;=\sum_{x \in X} p(x) H(Y | X) \ &amp;=-\sum_{x \in X} p(x) \sum_{y \in Y} p(y | x) \log p(y | x) \ &amp;=-\sum_{x \in X} \sum_{y \in Y} p(y, x) \log p(y | x) \end{aligned}<br>$$</p>
+<h2 id="字体"><a href="#字体" class="headerlink" title="字体"></a>字体</h2><ul>
+<li>使用<code>\mathbb</code>或<code>\Bbb</code>来显示黑板粗体字，$\Bbb {NQRZ}$</li>
+<li>使用<code>\mathbf</code>来显示粗体字，$\mathbf {ABCD abcd}$</li>
+<li>使用<code>\mathtt</code>来显示打印式字体，$\mathtt {ABCDabcd}$</li>
+<li>使用<code>\mathrm</code>来显示罗马字体，$\mathrm{ABCDabcd}$</li>
+<li>使用<code>\mathcal</code>来显示手写字体，$\mathcal{ABCDabcd}$</li>
+<li>使用<code>\mathscr</code>来显示剧本字体，$\mathscr{ABCDabcd}$</li>
+<li>使用<code>\mathfrak</code>来显示Fraktur字母(一种旧的德国字体)，$\mathfrak{ABCDabcd}$</li>
+</ul>
+<h2 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h2><p>通过大括号<code>&#123;&#125;</code>将操作数与符号分割开，消除二义性。例如，若使用<code>x^10</code>，其效果为$x^10$，这里就要用到大括号，<code>x^&#123;10&#125;</code>，最终效果为$x^{10}$。</p>
+<h2 id="空间"><a href="#空间" class="headerlink" title="空间"></a>空间</h2><p>MathJax 通常用自己的一套复杂策略来决定公式的空间距离。直接在两个元素之间加入空格是毫无用处的。因此为了增加空间距离，使用<code>\,</code>可以增加稍许空间；使用<code>\;</code>可以增加更多的空间；<code>\quad</code>和<code>\qquad</code>分别对应更大的空间。</p>
+<h2 id="希腊字母"><a href="#希腊字母" class="headerlink" title="希腊字母"></a>希腊字母</h2><table>
+<thead>
+<tr>
+<th align="left">大写字母</th>
+<th align="left">实现</th>
+<th align="left">小写字母</th>
+<th align="left">实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$A$</td>
+<td align="left"><code>A</code></td>
+<td align="left">$\alpha$</td>
+<td align="left"><code>\alpha</code></td>
+</tr>
+<tr>
+<td align="left">$B$</td>
+<td align="left"><code>B</code></td>
+<td align="left">$\beta$</td>
+<td align="left"><code>\beta</code></td>
+</tr>
+<tr>
+<td align="left">$\Gamma$</td>
+<td align="left"><code>\Gamma</code></td>
+<td align="left">$\gamma$</td>
+<td align="left"><code>\gamma</code></td>
+</tr>
+<tr>
+<td align="left">$\Delta$</td>
+<td align="left"><code>\Delta</code></td>
+<td align="left">$\delta$</td>
+<td align="left"><code>\delta</code></td>
+</tr>
+<tr>
+<td align="left">$E$</td>
+<td align="left"><code>E</code></td>
+<td align="left">$\epsilon$</td>
+<td align="left"><code>\epsilon</code></td>
+</tr>
+<tr>
+<td align="left">$Z$</td>
+<td align="left"><code>Z</code></td>
+<td align="left">$\zeta$</td>
+<td align="left"><code>\zeta</code></td>
+</tr>
+<tr>
+<td align="left">$H$</td>
+<td align="left"><code>H</code></td>
+<td align="left">$\eta$</td>
+<td align="left"><code>\eta</code></td>
+</tr>
+<tr>
+<td align="left">$\Theta$</td>
+<td align="left"><code>\Theta</code></td>
+<td align="left">$\theta$</td>
+<td align="left"><code>\theta</code></td>
+</tr>
+<tr>
+<td align="left">$\Lambda$</td>
+<td align="left"><code>\Lambda</code></td>
+<td align="left">$\lambda$</td>
+<td align="left"><code>\lambda</code></td>
+</tr>
+<tr>
+<td align="left">$M$</td>
+<td align="left"><code>M</code></td>
+<td align="left">$\mu$</td>
+<td align="left"><code>     \mu</code></td>
+</tr>
+<tr>
+<td align="left">$N$</td>
+<td align="left"><code>N</code></td>
+<td align="left">$\nu$</td>
+<td align="left"><code>     \nu</code></td>
+</tr>
+<tr>
+<td align="left">$\Xi$</td>
+<td align="left"><code>     \Xi</code></td>
+<td align="left">$\xi$</td>
+<td align="left"><code>     \xi</code></td>
+</tr>
+<tr>
+<td align="left">$O$</td>
+<td align="left"><code>O</code></td>
+<td align="left">$\omicron$</td>
+<td align="left"><code>     \omicron</code></td>
+</tr>
+<tr>
+<td align="left">$\Pi$</td>
+<td align="left"><code>\Pi</code></td>
+<td align="left">$\pi$</td>
+<td align="left"><code>\pi</code></td>
+</tr>
+<tr>
+<td align="left">$P$</td>
+<td align="left"><code>P</code></td>
+<td align="left">$\rho$</td>
+<td align="left"><code>     \rho</code></td>
+</tr>
+<tr>
+<td align="left">$\Sigma$</td>
+<td align="left"><code>\Sigma</code></td>
+<td align="left">$\sigma$</td>
+<td align="left"><code>\sigma</code></td>
+</tr>
+<tr>
+<td align="left">$T$</td>
+<td align="left"><code>T</code></td>
+<td align="left">$\tau$</td>
+<td align="left"><code>     \tau</code></td>
+</tr>
+<tr>
+<td align="left">$\Upsilon$</td>
+<td align="left"><code>\Upsilon</code></td>
+<td align="left">$\upsilon$</td>
+<td align="left"><code>\upsilon</code></td>
+</tr>
+<tr>
+<td align="left">$\Phi$</td>
+<td align="left"><code>     \Phi</code></td>
+<td align="left">$\phi$</td>
+<td align="left"><code>     \phi</code></td>
+</tr>
+<tr>
+<td align="left">$X$</td>
+<td align="left"><code>X</code></td>
+<td align="left">$\chi$</td>
+<td align="left"><code>\chi</code></td>
+</tr>
+<tr>
+<td align="left">$\Psi$</td>
+<td align="left"><code>\Psi</code></td>
+<td align="left">$\psi$</td>
+<td align="left"><code>\psi</code></td>
+</tr>
+<tr>
+<td align="left">$\Omega$</td>
+<td align="left"><code>\Omega</code></td>
+<td align="left">$\omega$</td>
+<td align="left"><code>\omega</code></td>
+</tr>
+</tbody></table>
+<h2 id="数学符号"><a href="#数学符号" class="headerlink" title="数学符号"></a>数学符号</h2><h3 id="上标与下标"><a href="#上标与下标" class="headerlink" title="上标与下标"></a>上标与下标</h3><p>上标或小标只需在后面加上<code> ^ 或 _</code>。另外需要注意的是，如果上下标不止一个字符，就需要用大括号括起来，表示是一个整体，<code>&#123;...&#125;</code>。</p>
+<h3 id="分式"><a href="#分式" class="headerlink" title="分式"></a>分式</h3><p>有两种方式做到这个效果。</p>
+<ol>
+<li>使用<code>\frac ab</code>。如<code>\frac &#123;1+a&#125;&#123;4+b&#125;</code>，效果为$\frac {1+a}{4+b}$;</li>
+<li>使用<code>a \over b</code>。如<code>&#123;1+a&#125; \over &#123;4+b&#125;</code>，效果为${1+a} \over {4+b}$。<br> <em><strong>一般推荐使用第二种</strong></em></li>
+</ol>
+<h3 id="根式"><a href="#根式" class="headerlink" title="根式"></a>根式</h3><p>平方根：<br><code>\sqrt&#123;x^3&#125;</code>，效果为$\sqrt{x^3}$；</p>
+<p>其余：<br><code>\sqrt[4]&#123;\frac xy&#125;</code>，效果为$\sqrt[4]{\frac xy}$。</p>
+<h3 id="关系比较符号"><a href="#关系比较符号" class="headerlink" title="关系比较符号"></a>关系比较符号</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\lt$</td>
+<td><code>\lt</code></td>
+</tr>
+<tr>
+<td>$\gt$</td>
+<td><code>\gt</code></td>
+</tr>
+<tr>
+<td>$\le$</td>
+<td><code>\le</code></td>
+</tr>
+<tr>
+<td>$\ge$</td>
+<td><code>\ge</code></td>
+</tr>
+<tr>
+<td>$\neq$</td>
+<td><code>\neq</code></td>
+</tr>
+</tbody></table>
+<h3 id="运算符号"><a href="#运算符号" class="headerlink" title="运算符号"></a>运算符号</h3><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$+$</td>
+<td><code>+</code></td>
+</tr>
+<tr>
+<td>$-$</td>
+<td><code>-</code></td>
+</tr>
+<tr>
+<td>$\times$</td>
+<td><code>\times</code></td>
+</tr>
+<tr>
+<td>$\div$</td>
+<td><code>\div</code></td>
+</tr>
+<tr>
+<td>$\pm$</td>
+<td><code>\pm</code></td>
+</tr>
+<tr>
+<td>$\mp$</td>
+<td><code>mp</code></td>
+</tr>
+<tr>
+<td>$\cdot$</td>
+<td><code>\cdot</code></td>
+</tr>
+</tbody></table>
+<h3 id="集合符号"><a href="#集合符号" class="headerlink" title="集合符号"></a>集合符号</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\cup$</td>
+<td><code>\cup</code></td>
+</tr>
+<tr>
+<td>$\cap$</td>
+<td><code>\cap</code></td>
+</tr>
+<tr>
+<td>$\setminus$</td>
+<td><code>\setminus</code></td>
+</tr>
+<tr>
+<td>$\subset$</td>
+<td><code>\subset</code></td>
+</tr>
+<tr>
+<td>$\subseteq$</td>
+<td><code>\subseteq</code></td>
+</tr>
+<tr>
+<td>$\subsetneq$</td>
+<td><code>\subsetneq</code></td>
+</tr>
+<tr>
+<td>$\supset$</td>
+<td><code>\supset</code></td>
+</tr>
+<tr>
+<td>$\in$</td>
+<td><code>\in</code></td>
+</tr>
+<tr>
+<td>$\notin$</td>
+<td><code>\notin</code></td>
+</tr>
+<tr>
+<td>$\emptyset$</td>
+<td><code>\emptyset</code></td>
+</tr>
+<tr>
+<td>$\varnothing$</td>
+<td><code>\varnothing</code></td>
+</tr>
+</tbody></table>
+<h3 id="箭头符号"><a href="#箭头符号" class="headerlink" title="箭头符号"></a>箭头符号</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\to$</td>
+<td><code>\to</code></td>
+</tr>
+<tr>
+<td>$\rightarrow$</td>
+<td><code>\rightarrow</code></td>
+</tr>
+<tr>
+<td>$\leftarrow$</td>
+<td><code>\leftarrow</code></td>
+</tr>
+<tr>
+<td>$\Rightarrow$</td>
+<td><code>\Rightarrow</code></td>
+</tr>
+<tr>
+<td>$\Leftarrow$</td>
+<td><code>\Leftarrow</code></td>
+</tr>
+<tr>
+<td>$\mapsto$</td>
+<td><code>\mapsto</code></td>
+</tr>
+<tr>
+<td>$\Uparrow$</td>
+<td><code>\Uparrow</code></td>
+</tr>
+<tr>
+<td>$\uparrow$</td>
+<td><code>\uparrow</code></td>
+</tr>
+<tr>
+<td>$\Downarrow$</td>
+<td><code>\Downarrow</code></td>
+</tr>
+<tr>
+<td>$\downarrow$</td>
+<td><code>\downarrow</code></td>
+</tr>
+</tbody></table>
+<h3 id="特殊符号"><a href="#特殊符号" class="headerlink" title="特殊符号"></a>特殊符号</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\infty$</td>
+<td><code>\infty</code></td>
+</tr>
+<tr>
+<td>$\nabla$</td>
+<td><code>\nabla</code></td>
+</tr>
+<tr>
+<td>$\partial$</td>
+<td><code>\partial</code></td>
+</tr>
+<tr>
+<td>$\approx$</td>
+<td><code>\approx</code></td>
+</tr>
+<tr>
+<td>$\sim$</td>
+<td><code>\sim</code></td>
+</tr>
+<tr>
+<td>$\simeq$</td>
+<td><code>\simeq</code></td>
+</tr>
+<tr>
+<td>$\cong$</td>
+<td><code>\cong</code></td>
+</tr>
+<tr>
+<td>$\equiv$</td>
+<td><code>\equiv</code></td>
+</tr>
+<tr>
+<td>$\prec$</td>
+<td><code>\prec</code></td>
+</tr>
+<tr>
+<td>${n+1 \choose 2k}$</td>
+<td><code>&#123;n+1 \choose 2k&#125;</code> 或 <code>\binom&#123;n+1&#125;&#123;2k&#125;</code></td>
+</tr>
+<tr>
+<td>$\land$</td>
+<td><code>\land</code></td>
+</tr>
+<tr>
+<td>$\lor$</td>
+<td><code>\lor</code></td>
+</tr>
+<tr>
+<td>$\lnot$</td>
+<td><code>\lnot</code></td>
+</tr>
+<tr>
+<td>$\forall$</td>
+<td><code>\forall</code></td>
+</tr>
+<tr>
+<td>$\exists$</td>
+<td><code>\exists</code></td>
+</tr>
+<tr>
+<td>$\top$</td>
+<td><code>\top</code></td>
+</tr>
+<tr>
+<td>$\bot$</td>
+<td><code>\bot</code></td>
+</tr>
+<tr>
+<td>$\vdash$</td>
+<td><code>\vdash</code></td>
+</tr>
+<tr>
+<td>$\vDash$</td>
+<td><code>\vDash</code></td>
+</tr>
+<tr>
+<td>$\star$</td>
+<td><code>\star</code></td>
+</tr>
+<tr>
+<td>$\ast$</td>
+<td><code>\ast</code></td>
+</tr>
+<tr>
+<td>$\oplus$</td>
+<td><code>\oplus</code></td>
+</tr>
+<tr>
+<td>$\circ$</td>
+<td><code>\circ</code></td>
+</tr>
+<tr>
+<td>$\bullet$</td>
+<td><code>\bullet</code></td>
+</tr>
+</tbody></table>
+<div id="括号"></div>
+### 括号
+
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$()$</td>
+<td><code>()</code></td>
+</tr>
+<tr>
+<td>$[]$</td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td>${ }$</td>
+<td><code>\&#123; \&#125;</code></td>
+</tr>
+<tr>
+<td>$\langle$</td>
+<td>`\langle</td>
+</tr>
+<tr>
+<td>$\rangle$</td>
+<td>`\rangle</td>
+</tr>
+<tr>
+<td>$\lceil x \rceil$</td>
+<td><code>\lceil x \rceil</code></td>
+</tr>
+<tr>
+<td>$\lfloor x \rfloor$</td>
+<td><code>\lfloor$ x \rfloor</code></td>
+</tr>
+<tr>
+<td><em><strong>原始括号不会自适应算式的大小，需要在括号外面加上<code>\left(…\right)</code></strong></em></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="求和、积分、极限与连乘"><a href="#求和、积分、极限与连乘" class="headerlink" title="求和、积分、极限与连乘"></a>求和、积分、极限与连乘</h3><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>表示</th>
+<th>示例</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\sum$</td>
+<td><code>\sum</code></td>
+<td>$\sum_{k=-\infty}^{\infty}X(k\Omega)$</td>
+<td><code>\sum_&#123;k=-\infty&#125;^&#123;\infty&#125;X(k\Omega)</code></td>
+</tr>
+<tr>
+<td>$\int$</td>
+<td><code>\int</code></td>
+<td>$\int_{-T/ 2}^{T/2}x(t)dt$</td>
+<td><code>\int_&#123;-T/ 2&#125;^&#123;T/2&#125;x(t)dt</code></td>
+</tr>
+<tr>
+<td>$\iint$</td>
+<td><code>\iint</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>$\prod$</td>
+<td><code>\prod</code></td>
+<td>$\prod_{i=1}^{n}i$</td>
+<td><code>\prod_&#123;i=1&#125;^&#123;n&#125;i</code></td>
+</tr>
+<tr>
+<td>$\lim\limits{}$</td>
+<td><code>\lim</code></td>
+<td>$\lim\limits_{n \to \infty}$</td>
+<td><code>\lim\limits_&#123;n \to \infty&#125;</code></td>
+</tr>
+</tbody></table>
+<h3 id="顶部符号"><a href="#顶部符号" class="headerlink" title="顶部符号"></a>顶部符号</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>表示</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$\hat x$</td>
+<td><code>\hat x</code>(单符号)</td>
+</tr>
+<tr>
+<td>$\widehat {xy}$</td>
+<td><code>\widehat &#123;xy&#125;</code></td>
+</tr>
+<tr>
+<td>$\overline {xyz}$</td>
+<td><code>\overline &#123;xyz&#125;</code></td>
+</tr>
+<tr>
+<td>$\vec {ab}$</td>
+<td><code>\vec &#123;ab&#125;</code>(最多两个符号)</td>
+</tr>
+<tr>
+<td>$\overrightarrow {abcd}$</td>
+<td><code>\overrightarrow &#123;abcd&#125;</code></td>
+</tr>
+<tr>
+<td>$\dot a$</td>
+<td><code>\dot a</code></td>
+</tr>
+<tr>
+<td>$\ddot a$</td>
+<td><code>\ddot a</code></td>
+</tr>
+</tbody></table>
+<div id="表格"></div>
+## 表格
+
+<p>在MathJax中插入表格需要<code>$$\begin&#123;array&#125;&#123;列格式&#125;…\end&#123;array&#125;$$</code>，在<code>\begin&#123;array&#125;</code>后需要表明每列的格式：<code>c</code>表示居中；<code>l</code>表示左对齐；<code>r</code>表示右对齐；<code>|</code>表示列分割线。每一行末用<code>\\</code>结束，用<code>&amp;</code>分隔矩阵元素。用<code>\hline</code>表示行分割线。<br>如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">\begin&#123;array&#125;&#123;c|lcr&#125;</span><br><span class="line">n &amp; \text&#123;Left&#125; &amp; \text&#123;Center&#125; &amp; \text&#123;Right&#125; \\</span><br><span class="line">\hline</span><br><span class="line">1 &amp; 0.24 &amp; 1 &amp; 125 \\</span><br><span class="line">2 &amp; -1 &amp; 189 &amp; -8 \\</span><br><span class="line">3 &amp; -20 &amp; 2000 &amp; 1+10i</span><br><span class="line">\end&#123;array&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p>$$<br>\begin{array}{c|lcr}<br>n &amp; \text{Left} &amp; \text{Center} &amp; \text{Right} \<br>\hline<br>1 &amp; 0.24 &amp; 1 &amp; 125 \<br>2 &amp; -1 &amp; 189 &amp; -8 \<br>3 &amp; -20 &amp; 2000 &amp; 1+10i<br>\end{array}<br>$$</p>
+<h2 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h2><ul>
+<li>使用<code>$$\begin&#123;matrix&#125;…\end&#123;matrix&#125;$$</code>，每一行末用<code>\\</code>结束，用<code>&amp;</code>分隔矩阵元素。<br><em><strong>eg.</strong></em></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">  \begin&#123;matrix&#125;</span><br><span class="line">  1 &amp; 0 &amp; 0 \\</span><br><span class="line">  0 &amp; 1 &amp; 0 \\</span><br><span class="line">  0 &amp; 0 &amp; 1 \\</span><br><span class="line">  \end&#123;matrix&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p>$$<br>\begin{matrix}<br>  1 &amp; 0 &amp; 0 \<br>  0 &amp; 1 &amp; 0 \<br>  0 &amp; 0 &amp; 1 \<br>  \end{matrix}<br>$$</p>
+<ul>
+<li>如果要加括号，可以使用上面的<a href="#%E6%8B%AC%E5%8F%B7">括号符号</a>。除此之外，还可以直接将matrix替换为pmatrix:$<br>\begin{pmatrix}<br>1 &amp; 0 &amp; 0 \<br>0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{pmatrix}<br>$，或者bmatrix，$\begin{bmatrix}<br>1 &amp; 0 &amp; 0 \<br>0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$，或者Bmatrix:$\begin{Bmatrix}<br>1 &amp; 0 &amp; 0 \<br>0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{Bmatrix}<br>$，或者vmatrix:$\begin{vmatrix}<br>1 &amp; 0 &amp; 0 \<br>0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{vmatrix}<br>$，或者Vmatrix:$\begin{Vmatrix}<br>1 &amp; 0 &amp; 0 \<br>0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{Vmatrix}<br>$</li>
+</ul>
+<ul>
+<li>如果你想省略一些项，可以使用<code>\cdots</code>$\cdots​$，<code>\ddots</code>，$\ddots​$，<code>\vdots</code>$\vdots​$。<br>如</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">  \begin&#123;pmatrix&#125;</span><br><span class="line">  1 &amp; a_1 &amp; a_1^2 &amp; \cdots &amp; a_1^n\\</span><br><span class="line">  1 &amp; a_2 &amp; a_2^2 &amp; \cdots &amp; a_2^n \\</span><br><span class="line">  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\  </span><br><span class="line">  1 &amp; a_n &amp; a_n^2 &amp; \cdots &amp; a_n^n  \\</span><br><span class="line">  \end&#123;pmatrix&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<p>$$<br>  \begin{pmatrix}<br>  1 &amp; a_1 &amp; a_1^2 &amp; \cdots &amp; a_1^n\<br>  1 &amp; a_2 &amp; a_2^2 &amp; \cdots &amp; a_2^n \<br>  \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots\<br>  1 &amp; a_n &amp; a_n^2 &amp; \cdots &amp; a_n^n  \<br>  \end{pmatrix}<br>$$</p>
+<ul>
+<li>增广矩阵是使用前面的创建<a href="#%E8%A1%A8%E6%A0%BC">表格</a>来实现<br>如：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">\left[</span><br><span class="line">    \begin&#123;array&#125;&#123;cc|c&#125;</span><br><span class="line">      1&amp;2&amp;3\\</span><br><span class="line">      4&amp;5&amp;6</span><br><span class="line">    \end&#123;array&#125;</span><br><span class="line">\right] </span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果：<br>$$<br>\left[<br>    \begin{array}{cc|c}<br>      1&amp;2&amp;3\<br>      4&amp;5&amp;6<br>    \end{array}<br>\right]<br>$$</p>
+<ul>
+<li>文本段内使用矩阵，则需要用<code>\bigl(\begin&#123;smallmatrix&#125;...\end&#123;smallmatrix&#125;\bigr)</code></li>
+</ul>
+<p>如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$\bigl( \begin&#123;smallmatrix&#125; a &amp; b \\ c &amp; d \end&#123;smallmatrix&#125; \bigr)$</span><br></pre></td></tr></table></figure>
+
+<p> 效果：</p>
+<p>$\bigl( \begin{smallmatrix} a &amp; b \ c &amp; d \end{smallmatrix} \bigr)$</p>
+<h2 id="分情况表达式"><a href="#分情况表达式" class="headerlink" title="分情况表达式"></a>分情况表达式</h2><ul>
+<li>使用<code>\begin&#123;cases&#125;…\end&#123;cases&#125;</code>，每种情况开始前用<code>&amp;</code>，用<code>\\</code>结束。<br>如：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">f(n) =</span><br><span class="line">\begin&#123;cases&#125;</span><br><span class="line">n/2,  &amp; \text&#123;if $n$ is even&#125; \\</span><br><span class="line">3n+1, &amp; \text&#123;if $n$ is odd&#125;</span><br><span class="line">\end&#123;cases&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p>$$<br>f(n) =<br>\begin{cases}<br>n/2,  &amp; \text{if $n$ is even} \<br>3n+1, &amp; \text{if $n$ is odd}<br>\end{cases}<br>$$</p>
+<ul>
+<li>如果想要更多的竖直空间，可以用<code>\\[2ex]</code>代替<code>\\</code>。</li>
+</ul>
+<p>如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">f(n) =</span><br><span class="line">\begin&#123;cases&#125;</span><br><span class="line">\frac&#123;n&#125;&#123;2&#125;,  &amp; \text&#123;if $n$ is even&#125; \\[2ex]</span><br><span class="line">3n+1, &amp; \text&#123;if $n$ is odd&#125;</span><br><span class="line">\end&#123;cases&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p>$$<br>f(n) =<br>\begin{cases}<br>\frac{n}{2},  &amp; \text{if $n$ is even} \[2ex]<br>3n+1, &amp; \text{if $n$ is odd}<br>\end{cases}<br>$$</p>
+<h2 id="标记与引用"><a href="#标记与引用" class="headerlink" title="标记与引用"></a>标记与引用</h2><p>为了方便在文章中标记等式，通常使用<code>tag&#123;yourtag&#125;</code>,如果想在后面引用这个等式，就使用<code>\label&#123;somelabel&#125;</code> ，且放在tag的后面。(<strong>引用的功能有问题</strong>)<br>例：<br><code>x=y+a\sin x \tag&#123;*&#125;</code></p>
+<p>$$<br>x=y+a\sin x  \tag{*}<br>$$</p>
+<p>为了在接下来引用这个式子，使用<code>\eqref&#123;somelabel&#125;</code> ，例：<br><code>x-\sin x \stackrel&#123;\eqref&#123;*&#125;&#125;=y</code></p>
+<p>$$<br>x-\sin x \stackrel{\eqref{*}}=y<br>$$</p>
+<h2 id="绝对值和模"><a href="#绝对值和模" class="headerlink" title="绝对值和模"></a>绝对值和模</h2><p>绝对值可以使用<code>\lvert x\rvert</code> 表示$\lvert x\rvert​$ ，对于向量的模长，则可以使用<code>\lVert v\rVert</code> ，$\lVert v\rVert​$ 。</p>
+<h2 id="高亮"><a href="#高亮" class="headerlink" title="高亮"></a>高亮</h2><p>为了显著表示某等式，可以使用<code>\bbox</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$ \bbox[yellow]</span><br><span class="line">&#123;</span><br><span class="line">e^x=\lim_&#123;n\to\infty&#125; \left( 1+\frac&#123;x&#125;&#123;n&#125; \right)^n</span><br><span class="line">\qquad (1)</span><br><span class="line">&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>$$<br>\bbox[yellow]<br>{<br>e^x=\lim_{n\to\infty} \left( 1+\frac{x}{n} \right)^n<br>\qquad (1)<br>}<br>$$</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$$</span><br><span class="line">\bbox[border:2px solid red]</span><br><span class="line">&#123;</span><br><span class="line">e^x=\lim_&#123;n\to\infty&#125; \left( 1+\frac&#123;x&#125;&#123;n&#125; \right)^n</span><br><span class="line">\qquad (2) </span><br><span class="line">&#125;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>$$<br>\bbox[border:2px solid red]<br>{<br>e^x=\lim_{n\to\infty} \left( 1+\frac{x}{n} \right)^n<br>\qquad (2)<br>}<br>$$</p>
+<p>参考资料：<br><a href="http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference" title="mathjax-basic-tutorial-and-quick-reference">mathjax-basic-tutorial-and-quick-reference </a></p>
+]]></content>
+      <categories>
+        <category>效率工具</category>
+      </categories>
+      <tags>
+        <tag>mathjax</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础统计学总结</title>
+    <url>/2019/04/14/%E5%9F%BA%E7%A1%80%E7%BB%9F%E8%AE%A1%E5%AD%A6%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>对于基础的统计学知识进行总结，包括抽样、相关性分析等</p>
+<span id="more"></span>
+
+<h1 id="统计基础"><a href="#统计基础" class="headerlink" title="统计基础"></a>统计基础</h1><ol>
+<li>3$\sigma$原则</li>
+</ol>
+<p>正态分布$X\sim N(\mu,\sigma^2)$中，</p>
+<p>$$<br>P(\mu-\sigma\lt X\lt \mu+\sigma)=0.6826<br>$$</p>
+<p>$$<br>P(\mu-2\sigma\lt X\lt \mu+2\sigma)=0.9545<br>$$</p>
+<p>$$<br>P(\mu-3\sigma\lt X\lt \mu+3\sigma)=0.9973<br>$$</p>
+<h1 id="关于抽样"><a href="#关于抽样" class="headerlink" title="关于抽样"></a>关于抽样</h1><ol>
+<li>大数定律</li>
+</ol>
+<p>如果随机变量总体存在有限的平均数和方差，则对于充分大的抽样数量$n$，可以以几乎趋近于1的概率来期望抽样平均数与总体平均数的绝对离差.</p>
+<p>$$<br>\lim_{n\to \infty}P(|\overline x-\overline X|\le\epsilon)=1<br>$$</p>
+<p>其中，$\epsilon$为任意小的正数.</p>
+<ol start="2">
+<li>中心极限定理</li>
+</ol>
+<p>大数定律论证了抽样平均数趋近于总体平均数的趋势，抽样平均数与总体平均数的离差不超过一定范围的概率大小问题则是由中心极限定理确定.</p>
+<p>中心极限定理结论是：随机变量之和的分布函数向正态分布收敛</p>
+<ol start="3">
+<li>抽样形式</li>
+</ol>
+<ul>
+<li><p>简单随机抽样</p>
+</li>
+<li><p>分层抽样<br>先依据特征将总体划分为多个部分，然后在各个子部分进行抽样.</p>
+</li>
+<li><p>等距抽样<br>先将总体按照某一标准排列，然后按照固定的间隔进行抽取.</p>
+</li>
+<li><p>整群抽样<br>先将总体（学生）按单位划分为多个群（班级），然后在各个群众进行抽取.</p>
+</li>
+<li><p>多阶段抽样<br>先按总体的层次关系进行划分，再随机抽取高层次的群，然后依次按层次抽取.</p>
+</li>
+</ul>
+<ol start="4">
+<li>抽样平均误差</li>
+</ol>
+<ul>
+<li><p>重复抽样<br>$$<br>\mu_x=\sqrt{\frac{\sigma^2}{n}}<br>$$</p>
+</li>
+<li><p>不重复抽样</p>
+</li>
+</ul>
+<p>$$<br>\mu_x=\sqrt{\frac{\sigma^2}{n}\frac{N-n}{N-1}}<br>$$</p>
+<h1 id="关于相关性分析"><a href="#关于相关性分析" class="headerlink" title="关于相关性分析"></a>关于相关性分析</h1><ol>
+<li>皮尔逊线性相关系数<br>用于观察两个变量之间的线性关系</li>
+</ol>
+<p>要求：</p>
+<ul>
+<li>变量之间是线性关系，都是连续数据</li>
+<li>变量使正态分布，或者接近正态的单峰分布</li>
+<li>变量之间的观测值成对，且相互独立</li>
+</ul>
+<p>$$<br>r=\frac{Cov(X,Y)}{\sigma_X\sigma_Y}<br>$$</p>
+<ul>
+<li>r&gt;0时，两个变量正相关，当$x$增大时，$y$也有增大的趋势</li>
+<li>r&lt;0时，两个变量负相关，当$x$减小时，$y$有增大的趋势</li>
+</ul>
+<p>经验解释：</p>
+<ul>
+<li>当$|r|\ge 0.8$时，两个变量之间高度相关</li>
+<li>当$0.5 \le|r| \gt 0.8$时，两个变量之间中度相关</li>
+<li>当$0.3 \le|r| \gt 0.5$时，两个变量之间低度相关</li>
+<li>当$|r| \gt 0.3$时，两个变量之间相关程度极弱</li>
+</ul>
+<ol start="2">
+<li>斯皮尔曼等级相关系数<br>依据两列成对数据的各对等级数之差来计算，又被称为“等级差数法”</li>
+</ol>
+<p>要求：<br>没有皮尔逊相关系数要求严格，不论变量的分布形态.</p>
+<p>$$<br>\rho=\frac{6\sum_{i=1}^{N}d_i^2}{N(N^2-1)}<br>$$</p>
+<p>取值也是在$0\sim 1$之间</p>
+<ol start="3">
+<li>肯德尔等级相关系数</li>
+</ol>
+<p>$$<br>Tau=\frac{C-D}{\frac{1}{2}N(N-1)}<br>$$</p>
+<p>其中，$C$表示$X$与$Y$中拥有一致性的元素对数，$D$表示$X$与$Y$中不一致的元素对数.同时上述公司只适用于$X$与$Y$中不存在相同元素的情况.取值情况与皮尔逊系数一样.</p>
+]]></content>
+      <categories>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>统计学基础</tag>
+        <tag>抽样</tag>
+        <tag>相关性分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>尸检报告</title>
+    <url>/2021/05/11/%E5%B0%B8%E6%A3%80%E6%8A%A5%E5%91%8A/</url>
+    <content><![CDATA[<blockquote class="blockquote-center">Carla Valentine
+伦敦巴斯病理学博物馆馆长</blockquote>
+
+<p>解剖病理学技术员（APT）</p>
+<h1 id="发源"><a href="#发源" class="headerlink" title="发源"></a>发源</h1><p>1000多年来，随着政策和信仰的变化，处于教学目的的人体解剖和检查在获得支持和遭受反对之间不断徘徊。在人类文明的发源地之一希腊，人们并不认为解剖是对死者的严重亵渎：古希腊人相信这是对科学主义的一种正常扩展。</p>
+<p>公元前三世纪，古希腊卡尔西登城的外科医生希罗菲卢斯和克奥斯岛的医生埃拉西斯特拉图斯，被认为开创了人体系统解剖的先河，他们将所有发现都做了详细的记录，并且成立了著名的亚历山大医学院。热情同样可能成为问题的源头：传说希罗菲卢斯曾经对600多名囚犯进行活体解剖。</p>
+<ul>
+<li>1514年出生的解剖学家安德雷亚斯.维萨里</li>
+</ul>
+<blockquote>
+<p>偷偷溜出学校去投巴黎城外绞刑架上刚被处决的死囚尸体，还总是为了研究头颅和骨骼而跑去圣地公寓</p>
+<p>22岁那年，维萨里开始进行解剖学系列讲座，并在现场做解剖展示</p>
+<p>1543年，出版人体解剖学巨著《人体构造》</p>
+</blockquote>
+<p>在英国，大学培养年轻的外科医生时，医学院用于教学解剖的唯一合法尸源是根据1752年颁布的《谋杀法案》捐献的。这导致了19世纪初，英国境内大概有10所大学的医学院仍没有足够的尸源供应，短缺直接导致了臭名昭著的掘墓盗尸的猖獗及尸体交易的泛滥。实际上，很多医学院的学生都是通过兼职偷盗尸体赚得学费的。</p>
+<p>掘墓盗尸的交易随着1832年《解剖法案》的颁布而告终</p>
+<h2 id="尸体变化"><a href="#尸体变化" class="headerlink" title="尸体变化"></a>尸体变化</h2><ul>
+<li><p>新鲜尸体</p>
+<p>死后1~4小时开始出现<strong>尸僵</strong>（小肌群）</p>
+<ul>
+<li>首先形成于眼睑、下巴、脖颈和手指等处的一些小肌群</li>
+<li>虹膜上也存在这样的小肌群，所以用来判断死亡的一种有效方法就是用光源直射死者的眼睛：死者的瞳孔不会对光线产生收缩反应</li>
+<li>死者的发根会因为控制哺乳动物毛发的竖毛肌僵硬而直立起来，令人产生尸体的头发加速生长的错觉</li>
+</ul>
+<p>死后4~6小时尸僵逐渐发展到较大的肌群</p>
+<ul>
+<li>肌肉松弛结束，尸体变得僵硬，且关节固定</li>
+<li>想要移动已经出现尸僵的尸体，极有可能造成关节折断</li>
+</ul>
+<p>尸僵发展到全身后<strong>尸斑</strong>开始变得明显</p>
+<ul>
+<li>血液循环停止后，血液在重力的作用下发生沉积，从而在皮肤表面形成的紫红色斑痕</li>
+<li>出现或集中于尸体较低、且未与外物发生接触的部位的血管处</li>
+</ul>
+<p>尸斑在10小时后变得非常稳定，12小时后基本固定</p>
+<p><strong>尸冷</strong></p>
+<ul>
+<li>死后第一小时内，尸体的温度平均降低2摄氏度左右</li>
+<li>每过一小时降温1摄氏度，直至尸体的温度与环境温度基本接近</li>
+</ul>
+<p>死后36小时到48小时内，维持尸僵的蛋白质开始分解，尸僵的程度从而会得到缓解</p>
+<ul>
+<li>自溶<ul>
+<li>一般而言，死后4分钟左右自溶便开始了；过程中产生的各种液态产物会导致皮肤表面出现大量充满红色乃至褐色液体的水疱；死亡一周后，水疱胀满破裂，皮肤发生脱落</li>
+<li>原因：细胞用以消化外来异物分子的酶在死后泄露出来的缘故；胰脏，这个为消化食物提供各种酶类的器官在死后会首先将自己消化掉</li>
+</ul>
+</li>
+<li>微生物分解</li>
+</ul>
+</li>
+<li><p>尸体膨胀</p>
+<ul>
+<li>微生物分解充满气体</li>
+</ul>
+</li>
+<li><p>活动性腐烂</p>
+<ul>
+<li>尸体在这一阶段会发生质量的锐减，因为过量液体基本排净，胀满的气体也会通过一些方式释放掉</li>
+<li>苍蝇在死后大约24小时出现</li>
+</ul>
+</li>
+<li><p>后期腐烂</p>
+</li>
+<li><p>干燥遗骸</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>杂记</category>
+      </categories>
+      <tags>
+        <tag>读书笔记</tag>
+        <tag>自传</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>平方和定理</title>
+    <url>/2019/04/14/%E5%B9%B3%E6%96%B9%E5%92%8C%E5%AE%9A%E7%90%86/</url>
+    <content><![CDATA[<p>在数论里，平方和定理的对象为整数$n&gt;1$能够被写为两个平方和的形式，即$n=a^2+b^2$。该定理如下：</p>
+<blockquote>
+<p><strong>一个比$1$大的整数能够被写成两个平方的和的形式，当且仅当它的素数分解中不包含这样的素数，该素数对4取余等于3且该素数的指数为奇数。</strong></p>
+</blockquote>
+<p>例如，$2450=2\cdot 5^2\cdot 7^2$，在这素数分解中的素数包括$2，5，7$，其中只有$7$对4取余等于3，但是它的指数是$2$为偶数。因此，它可以表示为两个平方的和的形式。$2450=7^2+49^2$。<br>相对应地，3430的素数分解形式为$2\cdot 5 \cdot 7^3​$，其中3为奇数，因此按照定理它不能被写成两个平方的和的形式。</p>
+<p>参考资料：<br><a href="https://en.wikipedia.org/wiki/Sum_of_two_squares_theorem">Sum_of_two_squares_theorem</a></p>
+]]></content>
+      <categories>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>数论</tag>
+        <tag>平方和定理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>并行排序</title>
+    <url>/2019/04/17/%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/</url>
+    <content><![CDATA[<p>并行排序算法是计算机并行计算能力大大发展之后，为了提高排序效率而提出的算法。</p>
+<p>原有的的排序算法都是给定了数据再进行排序，排序的效率很大程度上取决于数据的好坏，例如快速排序、归并排序。并行排序则是一类完全不同的排序方法，它的所有比较操作都与数据无关。</p>
+<span id="more"></span>
+
+<p>并行排序的表示方式是排序网络，其主要构件就是<strong>Batcher比较器</strong>，通过组合比较器构建网络来完成排序功能。Batcher比较器指在两个输入端给定输入x,y，再在两个输出端输出最大值$\text{max}{x,y}$和最小值$\text{min}{x,y}$。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E6%AF%94%E8%BE%83%E5%99%A8.png"></p>
+<h1 id="传统排序算法网络"><a href="#传统排序算法网络" class="headerlink" title="传统排序算法网络"></a>传统排序算法网络</h1><p>实际上，传统的某些排序算法（无条件比较的排序算法<a href="%5BOI%E4%B9%8B%E5%A4%96%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF%EF%BC%9A%E7%AE%80%E5%8D%95%E8%B0%88%E8%B0%88%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%5D(http://www.matrix67.com/blog/archives/185)">^1</a>）也可以用网络的形式表示，例如归并排序和快速排序就无法通过比较器构成的电路网络表示，因为无法预先知道后面的条件交换操作会在什么位置进行，换种说法就是，比较器构成的电路网络中必须不考虑输入就确定结构。</p>
+<p>以冒泡排序举例，其核心是依次得出序列中的最值，其网络结构如下图所示（经调整过的冒泡排序网络，因为第$n$轮冒泡和第$n-1$轮冒泡在相差两个时间步后不再相互依赖，因此有一定的流水线并行性）。但是在并行硬件的背景下，可以看出这种排序算法仍有很大的改善空间（网络中的空白很多）。这是由于这类排序依赖于邻近数据的相对大小关系，不能很好地利用并行计算的资源。因此最直接的改良思路就是打破排序过程中数据间的依赖性，由此得到了<strong>奇偶合并网络</strong>和<strong>双调排序网络</strong>。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F.png"><center>冒泡排序网络</center></p>
+<h1 id="奇偶合并网络"><a href="#奇偶合并网络" class="headerlink" title="奇偶合并网络"></a>奇偶合并网络</h1><p>首先考虑奇偶排序方法，该方法主要有三个步骤：</p>
+<ol>
+<li>选取所有奇数列的元素与其右侧相邻的元素进行比较，将较小的元素排序在前面；</li>
+<li>选取所有偶数列的元素与其右侧相邻的元素进行比较，将较小的元素排序在前面；</li>
+<li>重复前面两步，直到所有序列有序为止。</li>
+</ol>
+<p>这是最基础的奇偶排序算法，其网络表示如下，该方法的平均时间复杂度为$O\left(n \log n\right)$</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555677542510.png" alt="1555677542510"><center>奇偶排序算法[^2]</center></p>
+<p>奇偶合并网络就是结合了两个部分：归并排序得到两个有序的子序列，以及最后对两个子序列的合并过程。如下图所示，两个蓝色方框内依次完成归并排序的两层得到两个有序的子序列。最后的合并过程（后面一个红色框），则是首先对所有的奇数项和偶数项分别递归地合并，然后在排序后的第i个偶数项和第i+1个奇数项之间设立Batcher比较器分别进行最后的调整。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/356px-Batcher_Odd-Even_Mergesort_for_eight_inputs.svg.png"></p>
+<p>平均和最差时间复杂度都是$O\left(\log ^{2}(n)\right)$，空间复杂度则是$O\left(n \log ^{2}(n)\right)$。奇偶归并网络的Python实现如下，</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge</span>(<span class="params">lo, hi, r</span>):</span></span><br><span class="line">    step = r * <span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> step &lt; hi - lo:</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo, hi, step)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo + r, hi, step)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> [(i, i + r) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(lo + r, hi - r, step)]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">yield</span> (lo, lo + r)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge_sort_range</span>(<span class="params">lo, hi</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot; sort the part of x with indices between lo and hi.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Note: endpoints (lo and hi) are included.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> (hi - lo) &gt;= <span class="number">1</span>:</span><br><span class="line">        <span class="comment"># if there is more than one element, split the input</span></span><br><span class="line">        <span class="comment"># down the middle and first sort the first and second</span></span><br><span class="line">        <span class="comment"># half, followed by merging them.</span></span><br><span class="line">        mid = lo + ((hi - lo) // <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(lo, mid)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(mid + <span class="number">1</span>, hi)</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge(lo, hi, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">oddeven_merge_sort</span>(<span class="params">length</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot; &quot;length&quot; is the length of the list to be sorted.</span></span><br><span class="line"><span class="string">    Returns a list of pairs of indices starting with 0 &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> oddeven_merge_sort_range(<span class="number">0</span>, length - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compare_and_swap</span>(<span class="params">x, a, b</span>):</span></span><br><span class="line">    <span class="keyword">if</span> x[a] &gt; x[b]:</span><br><span class="line">        x[a], x[b] = x[b], x[a]</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="双调排序网络"><a href="#双调排序网络" class="headerlink" title="双调排序网络"></a>双调排序网络</h1><p>1968年，肯特州立大学的计算机教授Kenneth Batcher设计出一种基于比较单元的电路，可以用$0.5\log_2^n\cdot(\log_2^n+1)​$并行时间步完成长度为$n​$的序列排序，并命名为双调合并网络（bitonic merger）。其中，双调序列定义为一个先单调递增再单调递减（或者先单调递减再单调递增）的序列。即存在一个$0 \leq k \leq n-1​$，使得$&lt;a_{0}, a_{1}, \dots, a_{k-1}&gt; ​$为升序序列，$&lt;a_{k}, a_{k+1}, \dots, a_{n-1}&gt;​$为降序序列。</p>
+<p>从以上定义可以推出双调序列具有的一个特点，即：如果$n​$为偶数，且$&lt;a_{0}, a_{1}, \dots, a_{n / 2-1}&gt;​$为升序序列，$&lt;a_{0}, a_{1}, \dots, a_{n / 2-1}&gt;​$为降序序列，则以下两个序列都是双调序列，</p>
+<p>$$S_{1}=&lt;\min \left(a_{0}, a_{n / 2}\right), \min \left(a_{1}, a_{n / 2+1}\right), \dots, \min \left(a_{n / 2-1}, a_{n-1}\right)&gt;​$$</p>
+<p>$$S_{2}=&lt;\max\left(a_{0}, a_{n / 2}\right), \max\left(a_{1}, a_{n / 2+1}\right), \dots, \max\left(a_{n / 2-1}, a_{n-1}\right)&gt;$$</p>
+<p>借助以上推论可以得到<strong>双调归并排序</strong>的算法，示例如下图所示，</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/1555654232064.png"></p>
+<p>上述归并排序算法的电路网络可以表示如下图（16路输入），</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.png" alt="双调归并排序"></p>
+<p>那么现在就有一个问题是如何得到最初的双调序列（初始序列），这个部分就是通过下图的红框部分完成的，再拼接上双调归并排序的部分，可以看出整个双调排序网络都是基于Batcher比较器搭建而成。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/%E5%8F%8C%E8%B0%83%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%E5%AE%9E%E4%BE%8B.png"><center>双调排序网络分析[^3]</center></p>
+<p>下面这个是一个8输入的双调排序网络示例，可以看出也是由这两个部分组成。</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/305px-Batcher_Bitonic_Mergesort_for_eight_inputs.svg.png" alt="双调排序网络"><center>8输入的双调排序网络示例</center></p>
+<p>考虑双调排序网络的时间复杂度，因为该方法不依赖数据特性，最差时间复杂度和最好时间复杂度都是$O\left(\log ^{2}(n)\right)$，空间复杂度则是$O\left(n \log ^{2}(n)\right)$。</p>
+<p>双调排序网络的Python实现如下，</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_sort</span>(<span class="params">up, x</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    <span class="keyword">else</span>: </span><br><span class="line">        first = bitonic_sort(<span class="literal">True</span>, x[:<span class="built_in">len</span>(x) // <span class="number">2</span>])</span><br><span class="line">        second = bitonic_sort(<span class="literal">False</span>, x[<span class="built_in">len</span>(x) // <span class="number">2</span>:])</span><br><span class="line">        <span class="keyword">return</span> bitonic_merge(up, first + second)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_merge</span>(<span class="params">up, x</span>):</span> </span><br><span class="line">    <span class="comment"># assume input x is bitonic, and sorted list is returned </span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        bitonic_compare(up, x)</span><br><span class="line">        first = bitonic_merge(up, x[:<span class="built_in">len</span>(x) // <span class="number">2</span>])</span><br><span class="line">        second = bitonic_merge(up, x[<span class="built_in">len</span>(x) // <span class="number">2</span>:])</span><br><span class="line">        <span class="keyword">return</span> first + second</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bitonic_compare</span>(<span class="params">up, x</span>):</span></span><br><span class="line">    dist = <span class="built_in">len</span>(x) // <span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(dist):  </span><br><span class="line">        <span class="keyword">if</span> (x[i] &gt; x[i + dist]) == up:</span><br><span class="line">            x[i], x[i + dist] = x[i + dist], x[i] <span class="comment">#swap</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0-1原理证明"><a href="#0-1原理证明" class="headerlink" title="0-1原理证明"></a>0-1原理证明</h1><p>那么给定一个排序网络，如何确定它是真的能够正确地排序任意输入呢？<strong>0-1原理（0-1 Principle）</strong>是由计算机教授<a href="https://zh.wikipedia.org/wiki/%E9%AB%98%E5%BE%B7%E7%BA%B3">高德纳</a>（Donald Ervin Knuth）提出来的，他在《<a href="https://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%89%BA%E6%9C%AF">计算机程序设计艺术</a>》的第三卷5.3.4节：<strong>排序与选择</strong>中，提出并论证了这个原理。该原理叙述如下：</p>
+<p><code>如果一个排序网络能够正确地对任何0-1序列排序，那么它就能对任意数组成的任意序列正确排序。</code></p>
+<p>因此为了验证一个输入排序网络的正确性，我们不必检验所有数字构成的任意长为n的序列，而只需检验 $2^{n}$个0-1序列就足以验证排序网络是否能正确排序了。这篇文章通过数学归纳法证明了奇偶合并网络能够对任何0-1序列排序，也就证明了它就能对任意数组成的任意序列正确排序。<a href="%5BOI%E4%B9%8B%E5%A4%96%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF%EF%BC%9A%E7%AE%80%E5%8D%95%E8%B0%88%E8%B0%88%E6%8E%92%E5%BA%8F%E7%BD%91%E7%BB%9C%5D(http://www.matrix67.com/blog/archives/185)">^1</a></p>
+<h1 id="非2次幂输入的排序网络"><a href="#非2次幂输入的排序网络" class="headerlink" title="非2次幂输入的排序网络"></a>非2次幂输入的排序网络</h1><p>需要注意的是，以上两种提到的排序网络都假设了输入是2的整数次幂，保证了排序过程中的划分完整性。但是实际中，这是很难达到的目标，为了解决这个问题，最简单的方法就是填充，通过填充值并在排序结束后剔除以满足这个条件。还有一种方法就是对排序网络进行改进以能够解决任意$n​$的输入[^4]</p>
+<p>输入数据为6的排序网络设置如下，</p>
+<p><img src="%E5%B9%B6%E8%A1%8C%E6%8E%92%E5%BA%8F/bitonet6.gif"></p>
+<p>该方法的实现如下，</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BitonicSorterForArbitraryN</span> <span class="keyword">implements</span> <span class="title">Sorter</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">boolean</span> ASCENDING=<span class="keyword">true</span>;    <span class="comment">// sorting direction</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] a)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.a=a;</span><br><span class="line">        bitonicSort(<span class="number">0</span>, a.length, ASCENDING);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bitonicSort</span><span class="params">(<span class="keyword">int</span> lo, <span class="keyword">int</span> n, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n&gt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> m=n/<span class="number">2</span>;</span><br><span class="line">            bitonicSort(lo, m, !dir);</span><br><span class="line">            bitonicSort(lo+m, n-m, dir);</span><br><span class="line">            bitonicMerge(lo, n, dir);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bitonicMerge</span><span class="params">(<span class="keyword">int</span> lo, <span class="keyword">int</span> n, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n&gt;<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> m=greatestPowerOfTwoLessThan(n);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i=lo; i&lt;lo+n-m; i++)</span><br><span class="line">                compare(i, i+m, dir);</span><br><span class="line">            bitonicMerge(lo, m, dir);</span><br><span class="line">            bitonicMerge(lo+m, n-m, dir);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">compare</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">boolean</span> dir)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dir==(a[i]&gt;a[j]))</span><br><span class="line">            exchange(i, j);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">exchange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t=a[i];</span><br><span class="line">        a[i]=a[j];</span><br><span class="line">        a[j]=t;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// n&gt;=2  and  n&lt;=Integer.MAX_VALUE</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">greatestPowerOfTwoLessThan</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> k=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (k&gt;<span class="number">0</span> &amp;&amp; k&lt;n)</span><br><span class="line">            k=k&lt;&lt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> k&gt;&gt;&gt;<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>[^2]:<a href="https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort">Batcher odd–even mergesort</a><br>[^3]:<a href="https://en.wikipedia.org/wiki/Bitonic_sorter">Bitonic sorter</a><br>[^4]:<a href="http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/bitonic/oddn.htm">Bitonic sorting network for n not a power of 2</a></p>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+      </categories>
+      <tags>
+        <tag>排序</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>异常值检测</title>
+    <url>/2019/04/14/%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/</url>
+    <content><![CDATA[<p>在数据集中，异常值(Outlier or Anomaly)作为不寻常的表征点，无利于后面算法对于数据集中模式的挖掘，甚至会极大地影响性能，或者直接用于一些异常检测的场景，如欺诈检测、安全检测等.异常值检测是<strong>数据清洗</strong>里非常重要的一步.</p>
+<span id="more"></span>
+
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>一般可以利用聚类的思想，定义为<strong>分布稀疏且离密度高的群体较远的点</strong><br>通常异常值出现的原因有以下几种：</p>
+<ul>
+<li>数据收集过程出现问题，录入错误</li>
+<li>数据测量误差(人为、测量仪器)</li>
+<li>数据随机误差(数据自身)</li>
+</ul>
+<h1 id="如何检测"><a href="#如何检测" class="headerlink" title="如何检测"></a>如何检测</h1><h2 id="基于统计"><a href="#基于统计" class="headerlink" title="基于统计"></a>基于统计</h2><h3 id="1-基于高斯分布的异常点检测"><a href="#1-基于高斯分布的异常点检测" class="headerlink" title="1. 基于高斯分布的异常点检测"></a>1. <strong>基于高斯分布的异常点检测</strong></h3><p>根据已有的数据集，建立高斯分布的模型，通过新数据与已知分布的差异判断是否属于异常值，</p>
+<p>$$<br>p(x)=\frac{1}{\sqrt{2 \pi} \sigma^{2}} \exp \left(-\frac{x-\mu^{2}}{2 \sigma^{2}}\right)<br>$$</p>
+<p>可以扩展到多维或者多元分布.3$\sigma$原则也是属于高斯分布判断方法的一种，在这里异常值被定义为，<strong>其值与平均值的偏差超过三倍标准差的值</strong>，即</p>
+<p>$$<br>P(|x-\mu|\gt3\sigma)\le0.003<br>$$</p>
+<h3 id="2-四分位数"><a href="#2-四分位数" class="headerlink" title="2. 四分位数"></a>2. <strong>四分位数</strong></h3><p>$Q_1$：上四分位数<br>$Q_2$：下四分位数<br>$IQR=Q_1-Q_2$:上下四位分数之差，包含了全部观测值的一半</p>
+<p>四分位数的思想就是，通过估计数据集中可能的最小和最大值，以此判断异常值，估计可能的最小和最大值为<br>$$<br>min=Q_2-k<em>IOR\<br>max=Q_1+k</em>IOR<br>$$<br>$k$的取值取决于你对异常值的忍耐程度，一般取$k=1.5$.</p>
+<p><img src="%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/xiangtu.png"></p>
+<h3 id="3-各类统计量"><a href="#3-各类统计量" class="headerlink" title="3. 各类统计量"></a>3. 各类统计量</h3><p>更多的还有基于各类统计量来检测多元离群点，例如$\chi^2$检验、$t$检验等.</p>
+<h3 id="4-基于主成分分析的矩阵分解方法"><a href="#4-基于主成分分析的矩阵分解方法" class="headerlink" title="4. 基于主成分分析的矩阵分解方法"></a>4. 基于主成分分析的矩阵分解方法</h3><p>这种方法经过主成分分析分解，再进行重构，通过异常值在主成分分量上的偏差更大来判断是否异常.</p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIzODExMDE5MA==&mid=2694182465&idx=1&sn=c644809b757bb1c3f0439eae4bb2f78c#rd">https://mp.weixin.qq.com/s?__biz=MzIzODExMDE5MA==&amp;mid=2694182465&amp;idx=1&amp;sn=c644809b757bb1c3f0439eae4bb2f78c#rd</a></p>
+<h3 id="5-Seasonal-Hybrid-ESD算法"><a href="#5-Seasonal-Hybrid-ESD算法" class="headerlink" title="5. Seasonal Hybrid ESD算法"></a>5. Seasonal Hybrid ESD算法</h3><p>Twitter的异常检测算法(Seasonal Hybrid ESD)<br>先用STL把序列分解，考察残差项。假定这一项符合正态分布，然后就可以用Generalized ESD提取离群点<br><strong>待续…….</strong><br><a href="https://anomaly.io/blog/">https://anomaly.io/blog/</a></p>
+<h2 id="基于距离"><a href="#基于距离" class="headerlink" title="基于距离"></a>基于距离</h2><p>利用聚类的思想，对数据进行聚类.，排除距离中心最远的$N​$个点，一般的方法有，<strong>kmeans、knn、DBSCAN</strong>等</p>
+<h3 id="局部异常因子LOF-Local-Outlier-Factor-算法"><a href="#局部异常因子LOF-Local-Outlier-Factor-算法" class="headerlink" title="局部异常因子LOF(Local Outlier Factor)算法"></a>局部异常因子LOF(Local Outlier Factor)算法</h3><p>首先定义以下概念，</p>
+<ol>
+<li><p><strong>$k$邻近距离(k-distance)</strong><br> 定义为，在距离数据点$p$最近的几个点中第$k$个最近的点与点$p$之间的距离，记为$d_k(p)$</p>
+</li>
+<li><p><strong>可达距离</strong><br> 定义为，给定邻近距离参数$k$时，点$p$与另一点$o$的可达距离为，点$o$的$k$邻近距离与$distance(p,o)$两个距离比较的最大值，<br>$$<br>rech-dist_k(p, o)=\max{d_k(o),distance(p,o)}<br>$$</p>
+</li>
+<li><p><strong>局部可达密度(local rechability density)</strong><br> 基于可达距离，首先与点$p$距离小于$d_k(p)$的数据称为它的$k$近邻，记为$N_k(p)$，点$p$的局部可达密度则定义为，点$p$到$k$近邻数据点的平均可达距离的倒数<br>$$<br>lrd_k(p) = 1 / (\frac{\sum_{o \in N_{k}(p)} reach-dist_k(p,o)}{|N_{k}(p)|})<br>$$<br>局部可达密度的意义就是，一个数据点跟其他点比较疏远的话，那么显然它的局部可达密度就小，即密度越低的话，就越有可能是离群点.</p>
+</li>
+<li><p><strong>局部异常因子(local outlier factor)</strong><br> LOF算法为允许数据分布不均匀、密度不同的情况，采取了与周围近邻点相对密度来定义局部异常因子<br> 点$p$的局部相对密度（局部异常因子）为点$p$的$k近邻$的平均局部可达密度跟数据点p的局部可达密度的比值</p>
+</li>
+</ol>
+<p>$$<br>LOF_k(p)=\frac{\sum_{o \in N_{k}(p)} \frac{lrd_k(o)}{lrd_k(p)}}{|N_k(p)|} = \frac{\sum_{o \in N_k(p)} lrd_k(o)}{|N_k(p)|} / lrd_k(p)<br>$$</p>
+<p>如果数据点$p$的LOF得分小于1，表明数据点处在一个相对密集的区域，不大可能是一个异常点；如果数据点$p​$的LOF得分远大于1，表明数据点跟其他点比较疏远，很有可能是一个异常点.<br>别人的实现<br><a href="https://github.com/damjankuznar/pylof">https://github.com/damjankuznar/pylof </a><br><a href="https://github.com/wangyibo360/pylof">https://github.com/wangyibo360/pylof </a></p>
+<p><strong>注意点</strong><br>LOF算法中关于局部可达密度的定义其实暗含了一个假设，即：不存在大于等于$k$个重复的点。当这样的重复点存在的时候，这些点的平均可达距离为零，局部可达密度就变为无穷大，会给计算带来一些麻烦。在实际应用时，为了避免这样的情况出现，可以不考虑重复的情况。或者，还可以考虑给可达距离都加一个很小的值，避免可达距离等于零。<br>LOF 算法需要计算数据点两两之间的距离，造成整个算法时间复杂度为 $O(n^2)$ 。为了提高算法效率，FastLOF （Goldstein，2012）先将整个数据随机的分成多个子集，然后在每个子集里计算 LOF 值。对于那些 LOF异常得分小于等于1的，从数据集里剔除，剩下的在下一轮寻找更合适的近邻，并更新LOF值。</p>
+<h3 id="孤立森林iForest-Isolation-Forest"><a href="#孤立森林iForest-Isolation-Forest" class="headerlink" title="孤立森林iForest(Isolation Forest)"></a>孤立森林iForest(Isolation Forest)</h3><p>孤立森林基于异常值是孤立的离群点，正常值则聚集在密度较高的区域.iForst的重点就在于，如何<strong>快速有效</strong>地判断该点是在离群较远的地方还是聚集在某一块区域.其操作就是，通过随机切分超平面，不断二分数据空间，直到所有的数据都被单独地划分到某一子空间，直觉上来说，离群点会很快被单独划分到一个子空间里，而数据聚集的区域往往需要划分更多次，这一行为就体现在数据点在二叉树的高度的高低上.iForest就是基于ensemble的方法，切分多个独立的孤立树，最后给一个总的判断.其优点是具有线性时间复杂度，但是不适合维度过高.<br>更具体的可以参考<a href="https://yq.aliyun.com/articles/123685?spm=a2c4e.11153940.blogcont152627.11.665b4d2bDfCqOO">机器学习-异常检测算法（一）：Isolation Forest</a>，以及<a href="https://www.jianshu.com/p/5af3c66e0410?utm_campaign=maleskine">iForest （Isolation Forest）孤立森林 异常检测 入门篇</a>，同时这个算法在sklearn(<a href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.ensemble">sklearn.ensemble.IsolationForest</a>)里面已经有相应的实现.</p>
+<p><img src="%E5%BC%82%E5%B8%B8%E5%80%BC%E6%A3%80%E6%B5%8B/algorithm.png"></p>
+<h2 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h2><ul>
+<li>异常值可能是被正确记录的，本身就反应了数据集的某种模式，需要保留下来</li>
+<li>异常值被记录错误，可以删除</li>
+<li>异常值被错误记录，也可以修正</li>
+</ul>
+<hr>
+<p>以下是一些讨论和偏学术的文章资料</p>
+<p>1.<a href="http://cucis.ece.northwestern.edu/projects/DMS/publications/AnomalyDetection.pdf">Anomaly Detection : A Survey</a><br>2.<a href="https://rd.springer.com/content/pdf/10.1007%2F978-3-319-47578-3.pdf">Outlier Analysis</a><br>3.<a href="http://www.kdd.org/kdd2016/topics/view/outlier-and-anomaly-detection">KDD016-topics-outlier-and-anomaly-detection</a></p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>异常值检测</tag>
+        <tag>数据清洗</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>时间复杂度典型量</title>
+    <url>/2019/04/14/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%85%B8%E5%9E%8B%E9%87%8F/</url>
+    <content><![CDATA[<p>各个时间复杂度对应的基本时间规模</p>
+<p><img src="%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%85%B8%E5%9E%8B%E9%87%8F/1.png"></p>
+<hr>
+<p>Source From：</p>
+<p>《算法竞赛入门经典训练指南》</p>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+      </categories>
+      <tags>
+        <tag>时间复杂度</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用于C语言的GCC扩展</title>
+    <url>/2019/05/22/%E7%94%A8%E4%BA%8EC%E8%AF%AD%E8%A8%80%E7%9A%84GCC%E6%89%A9%E5%B1%95/</url>
+    <content><![CDATA[<p>Linux内核大量依赖GCC的某些扩展特性，<a href="http://adam8157.info/blog/2014/08/why-does-linux-kernel-depend-on-gcc-for-now/">这个网站</a>讨论了其中一部分，通常是为了提供新功能或者帮助编译器生成更高效的代码。</p>
+<span id="more"></span>
+
+
+
+<p>根据扩展特性的用途，可以分为功能性扩展和优化性扩展。</p>
+<h1 id="功能性扩展"><a href="#功能性扩展" class="headerlink" title="功能性扩展"></a>功能性扩展</h1><h2 id="类型发现"><a href="#类型发现" class="headerlink" title="类型发现"></a>类型发现</h2><p>GCC 允许通过变量的引用识别类型。这种操作支持<strong>泛型编程</strong>。在 C++、Ada 和 Java语言等许多现代编程语言中都可以找到相似的功能。Linux 使用 <code>typeof</code> 构建 <code>min</code> 和 <code>max</code> 等依赖于类型的操作。例1演示如何使用 <code>typeof</code> 构建一个泛型宏（见 ./linux/include/linux/kernel.h）。</p>
+<p>例1. 使用 <code>typeof</code> 构建一个泛型宏</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> min(x, y) (&#123;                \</span></span><br><span class="line"><span class="meta">    typeof(x) _min1 = (x);          \</span></span><br><span class="line"><span class="meta">    typeof(y) _min2 = (y);          \</span></span><br><span class="line"><span class="meta">    (void) (&amp;_min1 == &amp;_min2);      \</span></span><br><span class="line"><span class="meta">    _min1 &lt; _min2 ? _min1 : _min2; &#125;)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="范围扩展"><a href="#范围扩展" class="headerlink" title="范围扩展"></a>范围扩展</h2><p>GCC 支持范围扩展，通过<code>...</code>符号实现。其中之一是 <code>switch</code>/<code>case</code> 块中的 <code>case</code> 语句。在复杂的条件结构中，通常依靠嵌套的 <code>if</code> 语句实现与例 2（见 ./linux/drivers/scsi/sd.c）相同的结果，但是例 2 更简洁。使用 <code>switch</code>/<code>case</code> 也可以通过使用跳转表实现进行编译器优化。</p>
+<p>例2. 在case语句中使用范围</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">sd_major</span><span class="params">(<span class="keyword">int</span> major_idx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (major_idx) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK0_MAJOR;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span> ... <span class="number">7</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK1_MAJOR + major_idx - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">8</span> ... <span class="number">15</span>:</span><br><span class="line">        <span class="keyword">return</span> SCSI_DISK8_MAJOR + major_idx - <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        BUG();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;   <span class="comment">/* shut up gcc */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>还可以使用范围进行初始化，如下所示（见 ./linux/arch/cris/arch-v32/kernel/smp.c）。在这个示例中，<code>spinlock_t</code> 创建一个大小为 <code>LOCK_COUNT</code> 的数组。数组的每个元素初始化为 <code>SPIN_LOCK_UNLOCKED</code> 值。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Vector of locks used for various atomic operations */</span></span><br><span class="line"><span class="keyword">spinlock_t</span> cris_atomic_locks[] = &#123; [<span class="number">0</span> ... LOCK_COUNT - <span class="number">1</span>] = SPIN_LOCK_UNLOCKED&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>范围还支持更复杂的初始化。例如，以下代码指定数组中几个子范围的初始值。</p>
+  <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> widths[] = &#123; [<span class="number">0</span> ... <span class="number">9</span>] = <span class="number">1</span>, [<span class="number">10</span> ... <span class="number">99</span>] = <span class="number">2</span>, [<span class="number">100</span>] = <span class="number">3</span> &#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="零长度的数组"><a href="#零长度的数组" class="headerlink" title="零长度的数组"></a>零长度的数组</h2><p>在 C 标准中，必须定义至少一个数组元素。这个需求往往会使代码设计复杂化。但是，GCC 支持零长度数组的概念，这对于结构定义尤其有用。这个概念与 ISO C99 中灵活的数组成员相似，但是使用不同的语法。</p>
+<p>下面的示例在结构的末尾声明一个没有成员的数组（见 ./linux/drivers/ieee1394/raw1394-private.h）。这允许结构中的元素引用结构实例后面紧接着的内存。在需要数量可变的数组成员时，这个特性很有用。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">iso_block_store</span> &#123;</span></span><br><span class="line">        <span class="keyword">atomic_t</span> refcount;</span><br><span class="line">        <span class="keyword">size_t</span> data_size;</span><br><span class="line">        <span class="keyword">quadlet_t</span> data[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="判断调用地址"><a href="#判断调用地址" class="headerlink" title="判断调用地址"></a>判断调用地址</h2><p>在许多情况下，需要判断给定函数的调用者。GCC 提供用于此用途的内置函数 <code>__builtin_return_address</code>。这个函数通常用于调试，但是它在内核中还有许多其他用途。</p>
+<p>如下面的代码所示，<code>__builtin_return_address</code> 接收一个称为 <code>level</code> 的参数。这个参数定义希望获取返回地址的调用堆栈级别。例如，如果指定 <code>level</code> 为 <code>0</code>，那么就是请求当前函数的返回地址。如果指定 <code>level</code> 为 <code>1</code>，那么就是请求进行调用的函数的返回地址，依此类推。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span> * __builtin_return_address( <span class="keyword">unsigned</span> <span class="keyword">int</span> level );</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在下面的示例中（见 ./linux/kernel/softirq.c），<code>local_bh_disable</code> 函数在本地处理器上禁用软中断，从而禁止在当前处理器上运行 softirqs、tasklets 和 bottom halves。使用 <code>__builtin_return_address</code> 捕捉返回地址，以便在以后进行跟踪时使用这个地址。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">local_bh_disable</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__local_bh_disable((<span class="keyword">unsigned</span> <span class="keyword">long</span>)__builtin_return_address(<span class="number">0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="常量检测"><a href="#常量检测" class="headerlink" title="常量检测"></a>常量检测</h2><p>在编译时，可以使用 GCC 提供的一个内置函数判断一个值是否是常量。这种信息非常有价值，因为可以构造出能够通过常量叠算（constant folding）优化的表达式。<code>__builtin_constant_p</code> 函数用来检测常量。</p>
+<p><code>__builtin_constant_p</code> 的原型如下所示。注意，<code>__builtin_constant_p</code> 并不能检测出所有常量，因为 GCC 不容易证明某些值是否是常量。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> __builtin_constant_p( <span class="built_in">exp</span> )</span><br></pre></td></tr></table></figure>
+
+<p>Linux 相当频繁地使用常量检测。在例 3 所示的示例中（见 ./linux/include/linux/log2.h），使用常量检测优化 <code>roundup_pow_of_two</code> 宏。如果发现表达式是常量，那么就使用可以优化的常量表达式。如果表达式不是常量，就调用另一个宏函数把值向上取整到 2 的幂。</p>
+<p>例3. 使用常量检测优化宏函数</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> roundup_pow_of_two(n)           \</span></span><br><span class="line"><span class="meta">(                       				\</span></span><br><span class="line"><span class="meta">	__builtin_constant_p(n) ? (     	\</span></span><br><span class="line"><span class="meta">		(n == 1) ? 1 :					\</span></span><br><span class="line"><span class="meta">        (1UL &lt;&lt; (ilog2((n) - 1) + 1)) 	\</span></span><br><span class="line"><span class="meta">                   ) :      			\</span></span><br><span class="line"><span class="meta">	__roundup_pow_of_two(n)         	\</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="函数属性"><a href="#函数属性" class="headerlink" title="函数属性"></a>函数属性</h2><p>GCC 提供许多函数级属性，主要通过<code>__attribute__</code>机制，可以通过它们向编译器提供更多数据，帮助编译器执行优化。最新的GCC编译器提供了更多函数属性的支持，详细见Declaring Attributes of Functions](<a href="https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/Function-Attributes.html#Function-Attributes">https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/Function-Attributes.html#Function-Attributes</a>)</p>
+<p>如例4 所示，属性通过其他符号定义指定了别名。可以以此帮助阅读源代码参考，了解属性的使用方法（见 ./linux/include/linux/compiler-gcc3.h）。</p>
+<p>例4. 函数属性定义</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __inline__     __inline__      __attribute__((always_inline))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __deprecated           __attribute__((deprecated))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __attribute_used__     __attribute__((__used__))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __attribute_const__     __attribute__((__const__))</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __must_check            __attribute__((warn_unused_result))</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>例 4 所示的定义是 GCC 中可用的一些函数属性。它们也是在 Linux 内核中最有用的函数属性。下面解释如何使用这些属性：</p>
+<ul>
+<li><code>always_inline</code> 让 GCC 以内联方式处理指定的函数，无论是否启用了优化。</li>
+<li><code>deprecated</code> 指出函数已经被废弃，不应该再使用。如果试图使用已经废弃的函数，就会收到警告。还可以对类型和变量应用这个属性，促使开发人员尽可能少使用它们。</li>
+<li><code>__used__</code> 告诉编译器无论 GCC 是否发现这个函数的调用实例，都要使用这个函数。这对于从汇编代码中调用 C 函数有帮助。</li>
+<li><code>__const__</code> 告诉编译器某个函数是无状态的（也就是说，它使用传递给它的参数生成要返回的结果）。</li>
+<li><code>warn_unused_result</code> 让编译器检查所有调用者是否都检查函数的结果。这确保调用者适当地检验函数结果，从而能够适当地处理错误。</li>
+</ul>
+<p>下面是在 Linux 内核中使用这些属性的示例。<code>deprecated</code> 示例来自与体系结构无关的内核（./linux/kernel/resource.c），<code>const</code> 示例来自 IA64 内核源代码（./linux/arch/ia64/kernel/unwind.c）。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> __deprecated __check_region(struct resource </span><br><span class="line">    *parent, <span class="keyword">unsigned</span> <span class="keyword">long</span> start, <span class="keyword">unsigned</span> <span class="keyword">long</span> n)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">enum</span> unw_register_index __attribute_const__ </span></span><br><span class="line"><span class="function">    <span class="title">decode_abreg</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> abreg, <span class="keyword">int</span> memory)</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="优化性扩展"><a href="#优化性扩展" class="headerlink" title="优化性扩展"></a>优化性扩展</h1><h2 id="分支预测提示"><a href="#分支预测提示" class="headerlink" title="分支预测提示"></a>分支预测提示</h2><p>在 Linux 内核中最常用的优化技术之一是 <code>__builtin_expect</code>。在开发人员使用有条件代码时，常常知道最可能执行哪个分支，而哪个分支很少执行。如果编译器知道这种预测信息，就可以围绕最可能执行的分支生成最优的代码。</p>
+<p>如下所示，<code>__builtin_expect</code> 的使用方法基于两个宏 <code>likely</code> 和 <code>unlikely</code>（见 ./linux/include/linux/compiler.h）。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> likely(x)   __builtin_expect(!!(x), 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlikely(x) __builtin_expect(!!(x), 0)</span></span><br></pre></td></tr></table></figure>
+
+<p>通过使用 <code>__builtin_expect</code>，编译器可以做出符合提供的预测信息的指令选择决策。这使执行的代码尽可能接近实际情况。它还可以改进缓存和指令流水线。</p>
+<p>例如，如果一个条件标上了 “likely”，那么编译器可以把代码的 True 部分直接放在分支指令后面（这样就不需要执行分支指令）。通过分支指令访问条件结构的 False 部分，这不是最优的方式，但是访问它的可能性不大。按照这种方式，代码对于最可能出现的情况是最优的。</p>
+<p>例 5 给出一个使用 <code>likely</code> 和 <code>unlikely</code> 宏的函数（见 ./linux/net/core/datagram.c）。这个函数预测 <code>sum</code> 变量将是零（数据包的 <code>checksum</code> 是有效的），而且 <code>ip_summed</code> 变量不等于 <code>CHECKSUM_HW</code>。</p>
+<p>例 5. likely 和 unlikely 宏的使用示例</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> __skb_checksum_complete(struct sk_buff *skb)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> sum;</span><br><span class="line"> </span><br><span class="line">	sum = (u16)csum_fold(skb_checksum(skb, <span class="number">0</span>, skb-&gt;len, skb-&gt;csum));</span><br><span class="line">	<span class="keyword">if</span> (likely(!sum)) &#123;</span><br><span class="line">		<span class="keyword">if</span> (unlikely(skb-&gt;ip_summed == CHECKSUM_HW))</span><br><span class="line">			netdev_rx_csum_fault(skb-&gt;dev);</span><br><span class="line">		skb-&gt;ip_summed = CHECKSUM_UNNECESSARY;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="预读取"><a href="#预读取" class="headerlink" title="预读取"></a>预读取</h2><p>另一种重要的性能改进方法是把必需的数据缓存在接近处理器的地方。缓存可以显著减少访问数据花费的时间。大多数现代处理器都有三类内存：</p>
+<ul>
+<li>一级缓存通常支持单周期访问</li>
+<li>二级缓存支持两周期访问</li>
+<li>系统内存支持更长的访问时间</li>
+</ul>
+<p>为了尽可能减少访问延时并由此提高性能，最好把数据放在最近的内存中。手工执行这个任务称为<strong>预读取</strong>。GCC 通过内置函数 <code>__builtin_prefetch</code> 支持数据的手工预抓取。在需要数据之前，使用这个函数把数据放到缓存中。如下所示，<code>__builtin_prefetch</code> 函数接收三个参数：</p>
+<ul>
+<li>数据的地址</li>
+<li><code>rw</code> 参数，使用它指明预抓取数据是为了执行读操作，还是执行写操作</li>
+<li><code>locality</code> 参数，使用它指定在使用数据之后数据应该留在缓存中，还是应该清除</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span> __builtin_prefetch( <span class="keyword">const</span> <span class="keyword">void</span> *addr, <span class="keyword">int</span> rw, <span class="keyword">int</span> locality );</span><br></pre></td></tr></table></figure>
+
+<p>Linux 内核经常使用预读取。通常是通过宏和包装器函数使用预抓取。例 6 是一个辅助函数示例，它使用内置函数的包装器（见 ./linux/include/linux/prefetch.h）。这个函数为流操作实现预抓取机制。使用这个函数通常可以减少缓存缺失和停顿，从而提高性能。</p>
+<p>例6. 范围预读取的包装器函数</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> ARCH_HAS_PREFETCH</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> prefetch(x) __builtin_prefetch(x)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">prefetch_range</span><span class="params">(<span class="keyword">void</span> *addr, <span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> ARCH_HAS_PREFETCH</span></span><br><span class="line">    <span class="keyword">char</span> *cp;</span><br><span class="line">    <span class="keyword">char</span> *end = addr + len;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> (cp = addr; cp &lt; end; cp += PREFETCH_STRIDE)</span><br><span class="line">        prefetch(cp);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="变量属性"><a href="#变量属性" class="headerlink" title="变量属性"></a>变量属性</h2><p>除了本文前面讨论的函数属性之外，GCC 还为变量和类型定义提供了属性。最重要的属性之一是 <code>aligned</code> 属性，它用于在内存中实现对象对齐。除了对于性能很重要之外，某些设备或硬件配置也需要对象对齐。<code>aligned</code> 属性有一个参数，它指定所需的对齐类型。</p>
+<p>下面的示例用于软件暂停（见 ./linux/arch/i386/mm/init.c）。在需要页面对齐时，定义 <code>PAGE_SIZE</code> 对象。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> __nosavedata swsusp_pg_dir[PAGE_SIZE]</span><br><span class="line">    __attribute__ ((aligned (PAGE_SIZE)));</span><br></pre></td></tr></table></figure>
+
+<p>例 7 中的示例说明关于优化的两点：</p>
+<ul>
+<li><code>packed</code> 属性打包一个结构的元素，从而尽可能减少它们占用的空间。这意味着，如果定义一个 <code>char</code> 变量，它占用的空间不会超过一字节（8 位）。位字段压缩为一位，而不会占用更多存储空间。</li>
+<li>这段源代码使用一个 <code>__attribute__</code> 声明进行优化，它用逗号分隔的列表定义多个属性。</li>
+</ul>
+<p>例7. 结构打包和设置多个属性</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">swsusp_header</span> &#123;</span></span><br><span class="line">	<span class="keyword">char</span> reserved[PAGE_SIZE - <span class="number">20</span> - <span class="keyword">sizeof</span>(<span class="keyword">swp_entry_t</span>)];</span><br><span class="line">	<span class="keyword">swp_entry_t</span> image;</span><br><span class="line">	<span class="keyword">char</span>    orig_sig[<span class="number">10</span>];</span><br><span class="line">	<span class="keyword">char</span>    sig[<span class="number">10</span>];</span><br><span class="line">&#125;__attribute__((packed, aligned(PAGE_SIZE))) swsusp_header;</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<p>Source From:</p>
+<p><a href="https://www.ibm.com/developerworks/cn/linux/l-gcc-hacks/index.html#artrelatedtopics">Linux 内核中的 GCC 特性</a></p>
+]]></content>
+      <categories>
+        <category>计算机科学</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+        <tag>GCC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>矩阵论基础</title>
+    <url>/2019/04/15/%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<p>矩阵是数学中的一个重要的基本概念，是代数学的一个主要研究对象，也是数学研究和应用的一个重要工具。“矩阵”这个词是由西尔维斯特首先使用的，他是为了将数字的矩形阵列区别于行列式而发明了这个述语。而实际上，矩阵这个课题在诞生之前就已经发展的很好了。从行列式的大量工作中明显的表现出来，为了很多目的，不管行列式的值是否与问题有关，方阵本身都可以研究和使用，矩阵的许多基本性质也是在行列式的发展中建立起来的。</p>
+<p>1855 年，埃米特(C.Hermite，1822～1901)证明了别的数学家发现的一些矩阵类的特征根的特殊性质，如现在称为埃米特矩阵的特征根性质等。后来，克莱伯施(A.Clebsch，1831～1872)、布克海姆(A.Buchheim)等证明了对称矩阵的特征根性质。泰伯(H.Taber)引入矩阵的迹的概念并给出了一些有关的结论。 在矩阵论的发展史上，弗罗伯纽斯(G.Frobenius,1849-1917)的贡献是不可磨灭的。他讨论了最小多项式问题，引进了矩阵的秩、不变因子和初等因子、正交矩阵、矩阵的相似变换、合同矩阵等概念，以合乎逻辑的形式整理了不变因子和初等因子的理论，并讨论了正交矩阵与合同矩阵的一些重要性质。 1854 年，约当研究了矩阵化为标准型的问题。1892年，梅茨勒(H.Metzler)引进了矩阵的超越函数概念并将其写成矩阵的幂级数的形式。傅立叶、西尔和庞加莱的著作中还讨论了无限阶矩阵问题，这主要是适用方程发展的需要而开始的。</p>
+<span id="more"></span>
+
+<h1 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h1><h2 id="矩阵类型"><a href="#矩阵类型" class="headerlink" title="矩阵类型"></a>矩阵类型</h2><p>向量的类型根据元素的实际意义不同可以分为，</p>
+<ol>
+<li><p>物理向量</p>
+<p>泛指既有幅值，又有方向的物理量，如速度、加速度、位移等。</p>
+</li>
+<li><p>几何向量</p>
+<p>为了将物理向量可视化，常用带方向的线段表示。这种有向线段出称为几何向量。</p>
+</li>
+<li><p>代数向量</p>
+<p>几何向量可以用代数形式表示。例如，若平面上的几何向量$v=\vec{ab}$中点a的坐标为$(a_1,a_2)$,点b的坐标为$(b_1,b_2)$，则该几何向量可以表示为代数形式$\begin{bmatrix}<br>b_1-a_1\<br>b_2-a_2\<br>\end{bmatrix}<br>​$</p>
+</li>
+</ol>
+<p>其中，根据元素的类型不同，代数向量又可以分为以下三种，</p>
+<ol>
+<li><p>常数向量</p>
+<p>向量中的元素为实数或复数</p>
+</li>
+<li><p>函数向量</p>
+<p>向量中的元素包含函数值，如$\mathbf{x}=[1,x,x^2,…,x^n]^T$</p>
+</li>
+<li><p>随机向量</p>
+<p>向量中的元素为随机变量或随机过程，如$\mathbf{x}=[x_1(n),x_2(n),…,x_m(n)]^T$，其中$x_1(n),x_2(n),…,x_m(n)$是$m$个随机过程或随机信号</p>
+</li>
+</ol>
+<h2 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h2><h3 id="转置、共轭、共轭转置、加法、乘法和求逆"><a href="#转置、共轭、共轭转置、加法、乘法和求逆" class="headerlink" title="转置、共轭、共轭转置、加法、乘法和求逆"></a>转置、共轭、共轭转置、加法、乘法和求逆</h3><p>矩阵的基本运算包括矩阵的<strong>转置、共轭、共轭转置、加法、乘法和求逆</strong><br>$$<br>A=\begin{bmatrix}{a_{11}} &amp; {a_{12}} &amp; {\cdots} &amp; {a_{1 m}} \ {a_{21}} &amp; {a_{22}} &amp; {\cdots} &amp; {a_{2 m}} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{m 1}} &amp; {a_{m 2}} &amp; {\cdots} &amp; {a_{m m}}\end{bmatrix}<br>$$</p>
+<ol>
+<li>矩阵$A$的<strong>转置</strong>记为$A^T$，其元素定义为$[A^T]<em>{ij}=a</em>{ji}$，</li>
+</ol>
+<p>$$<br>A^T=\begin{bmatrix}{a_{11}} &amp; {a_{21}} &amp; {\cdots} &amp; {a_{m1}} \ {a_{12}} &amp; {a_{22}} &amp; {\cdots} &amp; {a_{m2}} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{1m}} &amp; {a_{2m}} &amp; {\cdots} &amp; {a_{m m}}\end{bmatrix}<br>$$</p>
+<ol start="2">
+<li>矩阵$A$的<strong>共轭</strong>记为$A^*$，其元素定义为$[A^*]<em>{ij}=a</em>{ij}^*$，</li>
+</ol>
+<p>$$<br>A^*=\begin{bmatrix}{a_{11}^*} &amp; {a_{12}^*} &amp; {\cdots} &amp; {a_{1 m}^*} \ {a_{21}^*} &amp; {a_{22}^*} &amp; {\cdots} &amp; {a_{2 m}^*} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{m 1}^*} &amp; {a_{m 2}^*} &amp; {\cdots} &amp; {a_{m m}^*}\end{bmatrix}<br>$$</p>
+<ol start="3">
+<li>矩阵$A$的<strong>共轭转置</strong>记为$A^H$，其元素定义为$[A^H]<em>{ij}=a</em>{ji}^*$，</li>
+</ol>
+<p>$$<br>A^T=\begin{bmatrix}{a_{11}^*} &amp; {a_{21}^*} &amp; {\cdots} &amp; {a_{m1}^*} \ {a_{12}^*} &amp; {a_{22}^*} &amp; {\cdots} &amp; {a_{m2}^*} \ {\cdots} &amp; {\cdots} &amp; {\cdots} &amp; {\cdots} \ {a_{1m}^*} &amp; {a_{2m}^*} &amp; {\cdots} &amp; {a_{m m}^*}\end{bmatrix}<br>$$<br>   共轭转置又被称为Hermitian伴随、Hermitian转置或Hermitian共轭，$A=A^T$的实方阵称为对称矩阵，$A=A^H$的复方阵称为Hermitian矩阵</p>
+<ol start="4">
+<li><p>方阵$A$的<strong>逆矩阵</strong>记为$A^{-1}$，$A^{-1}$被定义为满足以下关系$AA^{-1}=AA^{-1}=\mathbf{I}$</p>
+</li>
+<li><p>加法与乘法</p>
+<ul>
+<li><p>两个$m\times n$矩阵$A、B$的<strong>加法</strong>，$[A+B]<em>{ij}=a</em>{ij}+b_{ij}$</p>
+</li>
+<li><p>$m\times n$大小的矩阵$A$与$1\times n$大小的向量$x=[x_1,…,x_n]$相乘，$[Ax]<em>i=\sum</em>{j=1}^na_{ij}x_j,\quad i=1,…,m$</p>
+</li>
+<li><p>$m\times n​$大小的矩阵$A​$与$n\times r​$大小的矩阵$B​$相乘，$[AB]<em>{ij}=\sum</em>{k=1}^na_{ik}b_{kj},\quad i=1,…,m;j=1,…,r​$</p>
+</li>
+</ul>
+<p><code>需要注意的是，一般来说，矩阵乘积是不满足交换律的</code></p>
+</li>
+</ol>
+<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><p>关于矩阵中转置、共轭、共轭转置、求逆的性质</p>
+<ol>
+<li><p>分配律</p>
+<p>$(A+B)^*=A^*+B^*,\quad (A+B)^T=A^T+B^T,\quad (A+B)^H=A^H+B^H​$</p>
+</li>
+<li><p>矩阵乘积中转置、共轭转置、求逆的性质</p>
+<p>$(AB)^T=B^TA^T,\quad (AB)^H=B^HA^H,\quad (AB)^{-1}=B^{-1}A^{-1}​$</p>
+</li>
+<li><p>转置、共轭、共轭转置与求逆交换</p>
+<p>$(A^*)^{-1}=(A^{-1})^*,\quad (A^T)^{-1}=(A^{-1})^T,\quad (A^H)^{-1}=(A^{-1})^H$</p>
+</li>
+</ol>
+<h3 id="矩阵函数"><a href="#矩阵函数" class="headerlink" title="矩阵函数"></a>矩阵函数</h3><p>除了上述矩阵的基本运算之外，还有矩阵函数</p>
+<ol>
+<li><p>三角函数<br>$$<br>\begin{aligned} \sin (\boldsymbol{A}) &amp;=\sum_{n=0}^{\infty} \frac{(-1)^{n} \boldsymbol{A}^{2 n+1}}{(2 n+1) !}=\boldsymbol{A}-\frac{1}{3 !} \boldsymbol{A}^{3}+\frac{1}{5 !} \boldsymbol{A}^{5}-\cdots \ \cos (\boldsymbol{A}) &amp;=\sum_{n=0}^{\infty} \frac{(-1)^{n} \boldsymbol{A}^{2 n}}{(2 n) !}=\boldsymbol{I}-\frac{1}{2 !} \boldsymbol{A}^{2}+\frac{1}{4 !} \boldsymbol{A}^{4}-\cdots \end{aligned}<br>$$</p>
+</li>
+<li><p>指数函数<br>$$<br>\begin{aligned} \mathrm{e}^{A} &amp;=\sum_{n=0}^{\infty} \frac{1}{n !} \boldsymbol{A}^{n}=\boldsymbol{I}+\boldsymbol{A}+\frac{1}{2} \boldsymbol{A}^{2}+\frac{1}{3 !} \boldsymbol{A}^{3}+\cdots \ \mathrm{e}^{-\boldsymbol{A}} &amp;=\sum_{n=0}^{\infty} \frac{1}{n !}(-1)^{n} \boldsymbol{A}^{n}=\boldsymbol{I}-\boldsymbol{A}+\frac{1}{2} \boldsymbol{A}^{2}-\frac{1}{3 !} \boldsymbol{A}^{3}+\cdots \ \mathrm{e}^{\boldsymbol{A} t} &amp;=\boldsymbol{I}+\boldsymbol{A} t+\frac{1}{2} \boldsymbol{A}^{2} t^{2}+\frac{1}{3 !} \boldsymbol{A}^{3} t^{3}+\cdots \end{aligned}<br>$$</p>
+</li>
+<li><p>对数函数<br>$$<br>\ln (I+A)=\sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} A^{n}=A-\frac{1}{2} A^{2}+\frac{1}{3} A^{3}-\cdots<br>$$</p>
+</li>
+<li><p>矩阵导数<br>$$<br>\frac{\mathrm{d} \boldsymbol{A}}{\mathrm{d} t}=\dot{\boldsymbol{A}}=\left[ \begin{array}{cccc}{\frac{\mathrm{d} a_{11}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{12}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{1 n}}{\mathrm{d} t}} \ {\frac{\mathrm{d} a_{21}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{22}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{2 n}}{\mathrm{d} t}} \ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \ {\frac{\mathrm{d} a_{m 1}}{\mathrm{d} t}} &amp; {\frac{\mathrm{d} a_{m 2}}{\mathrm{d} t}} &amp; {\cdots} &amp; {\frac{\mathrm{d} a_{m n}}{\mathrm{d} t}}\end{array}\right]<br>$$</p>
+</li>
+<li><p>矩阵积分<br>$$<br>\int \boldsymbol{A} \mathrm{d} t=\left[ \begin{array}{cccc}{\int a_{11} \mathrm{d} t} &amp; {\int a_{12} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{1 n} \mathrm{d} t} \ {a_{21} \mathrm{d} t} &amp; {\int a_{22} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{2 n} \mathrm{d} t} \ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \ {\int a_{m 1} \mathrm{d} t} &amp; {\int a_{m 2} \mathrm{d} t} &amp; {\cdots} &amp; {\int a_{m n} \mathrm{d} t}\end{array}\right]<br>$$</p>
+</li>
+</ol>
+<h2 id="特殊矩阵"><a href="#特殊矩阵" class="headerlink" title="特殊矩阵"></a>特殊矩阵</h2><p>对角矩阵、零矩阵、单位矩阵</p>
+<h3 id="幂等矩阵"><a href="#幂等矩阵" class="headerlink" title="幂等矩阵"></a>幂等矩阵</h3><p>幂等矩阵$A$具有以下性质：</p>
+<p><img src="%E7%9F%A9%E9%98%B5%E8%AE%BA%E5%9F%BA%E7%A1%80/%E6%80%A7%E8%B4%A8.jpg"></p>
+<h3 id="幂单矩阵"><a href="#幂单矩阵" class="headerlink" title="幂单矩阵"></a>幂单矩阵</h3><p>又被称为对合矩阵，若$A^2=AA=\mathbf{I}​$，若$A​$为幂单矩阵，则函数$f(\cdot)​$具有以下性质：<br>$$<br>f(s \boldsymbol{I}+t \boldsymbol{A})=\frac{1}{2}[(\boldsymbol{I}+\boldsymbol{A}) f(s+t)+(\boldsymbol{I}-\boldsymbol{A}) f(s-t)]<br>$$<br>其中，幂等矩阵和幂单矩阵也有关系，矩阵$A$是幂单矩阵，当且仅当$\frac{1}{2}\boldsymbol({A}+\boldsymbol{I})$</p>
+<h3 id="幂零矩阵"><a href="#幂零矩阵" class="headerlink" title="幂零矩阵"></a>幂零矩阵</h3><p>方阵$A$被称为幂零矩阵，若$A^2=AA=\boldsymbol{O}$，若$A$为幂单矩阵，则函数$f(\cdot)$具有以下性质：<br>$$<br>f(s \boldsymbol{I}+t \boldsymbol{A})=\boldsymbol{I}f(s)+t\boldsymbol{A}f^{\prime}(s)<br>$$</p>
+<hr>
+<p>Source From:</p>
+<p>《矩阵分析与应用》，张贤达</p>
+]]></content>
+      <categories>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>矩阵论</tag>
+        <tag>共轭</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[译]回归分析的基本假设</title>
+    <url>/2019/04/14/%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/</url>
+    <content><![CDATA[<p>回归分析标志着预测建模的第一步.毫无疑问，它很容易实现，而且它的参数不会造成任何混乱，但是仅仅运行一行代码并不能解决问题.不只是看$R^2$和<strong>MSE</strong>，回归能说明更多的问题.</p>
+<p>为了模型效果的提升，必须首先了解回归假设以及当假设被违反时如何修正它们.</p>
+<span id="more"></span>
+
+
+
+<p>原文地址：<a href="https://www.analyticsvidhya.com/blog/2016/07/deeper-regression-analysis-assumptions-plots-solutions/" title="Going Deeper into Regression Analysis with Assumptions, Plots &amp; Solutions">《Going Deeper into Regression Analysis with Assumptions, Plots &amp; Solutions》</a></p>
+<h1 id="回归假设"><a href="#回归假设" class="headerlink" title="回归假设"></a>回归假设</h1><p>回归是一种<strong>参数</strong>方法，参数意味着模型需要为了分析需求对数据做出一定的假设.由此，当数据不再满足时，它很难得出较好的结果.</p>
+<h2 id="线性性-可加性"><a href="#线性性-可加性" class="headerlink" title="线性性  可加性"></a>线性性  可加性</h2><blockquote>
+<p>假设因变量为$Y$，自变量为$X_1$，$X_2$，则回归分析的默认假设为$Y=b+a_1X_1+a_2X_2+\epsilon$.<br>线性性：$X_1$每变动一个单位，$Y$相应变动$a_1$个单位，与$X_1$的绝对数值大小无关.<br>可加性：$X_1$对$Y$的影响是独立于其他自变量（如$X_2$）的.</p>
+</blockquote>
+<h3 id="影响"><a href="#影响" class="headerlink" title="影响"></a>影响</h3><p>模型将无法很好的描述变量之间的关系，极有可能导致很大的泛化误差.</p>
+<h3 id="检查方法"><a href="#检查方法" class="headerlink" title="检查方法"></a>检查方法</h3><p>通过查看其<strong>残差值</strong>vs<strong>拟合值</strong>的图，能够清晰地表示出数据中的多项式.相较于图一（残差随机分布），图二的残差明显呈现了某种二次型趋势，说明回归模型没有抓住数据的某些非线性特征.</p>
+<p><img src="%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/006mbQc7gy1fra1rggtkrj30jg09ht9j.jpg"></p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>通过对$X$做非线性变换改善，如$\log(X),\sqrt X or X^2$.</p>
+<h2 id="无自相关性"><a href="#无自相关性" class="headerlink" title="无自相关性"></a>无自相关性</h2><p>残差项之间不应该相关.违反这一原则的被称为自相关性.</p>
+<h3 id="影响-1"><a href="#影响-1" class="headerlink" title="影响"></a>影响</h3><p>通常发生在时间序列里面，后一项依赖于前一项.当自相关性发生的时候，我们预测值的标准差往往比真实的小，进而会导致置信区间变窄.同时，较低的标准差会导致P值较小，这会让我们得出错误的统计显著的参数.</p>
+<p>例如，设没有自相关性的情况下，自变量$X$的系数为15.02，而标准差为2.08。假设同一样本是有自相关性的，测得的标准差可能会只有1.20，所以置信区间也会从(12.94,17.10)缩小到(13.82,16.22).</p>
+<h3 id="检查办法"><a href="#检查办法" class="headerlink" title="检查办法"></a>检查办法</h3><p>通过Durbin – Watson (DW)统计公式计算.</p>
+<p>$$<br>DW=\frac{\sum_{t=2}^T(e_t-e_{t-1})^2}{\sum_{t=1}^Te_t^2}<br>$$</p>
+<p>该统计量的值落在(0,4)内，DW=2意味着没有自相关性，0&lt;DW&lt;2表明残差间有正的相关性，2&lt;DW&lt;4表明残差间有负的相关性.</p>
+<p>经验上，如果DW&lt;1或DW&gt;3，则自相关性已经达到了需要示警的水平.如果事先给定了检验的方向（正/负相关性）和置信度$\alpha$，也可以根据假设检验的思路进行对应计算.</p>
+<h2 id="独立性"><a href="#独立性" class="headerlink" title="独立性"></a>独立性</h2><p>自变量之间应该相互独立，违反这一原则被称为多重共线性.</p>
+<h3 id="影响-2"><a href="#影响-2" class="headerlink" title="影响"></a>影响</h3><p>违反会导致模型不能正确找出自变量之间的关系.同时会导致标准差偏高，因此会导致置信区间变宽以至于无法对参数进行精确估计.</p>
+<h3 id="检查办法-1"><a href="#检查办法-1" class="headerlink" title="检查办法"></a>检查办法</h3><p>首先，可以通过观察自变量的散点图（Scatter Plot）来进行初步判断.</p>
+<p>然后，针对可能存在多重共线性性的变量，我们观察其方差膨胀系数（VIF–Variance Inflation Factor）.<br>假设回归模型为:<br>$$<br>Y=\beta_0+\beta_1 X_1 + \beta_2 X_2 +\cdots+\beta_k X_k + \varepsilon<br>$$<br>对于变量$X_j$，可证得，其估计系数$\beta_j$的方差为：</p>
+<p>$$<br>\hat{var}(\hat{\beta}_j)=\frac{s^2}{(n-1)\hat{var}(X_j)}\cdot\frac{1}{1-R_j^2}<br>$$</p>
+<p>其中其中唯一与其它自变量有关的值是$R^2_j$，$R^2_j$是$X_j$关于其它自变量回归的残差：</p>
+<p>$$<br>X_j=\beta_0+\beta_1 X_1 + \beta_2 X_2 +\cdots + \beta_{j-1} X_{j-1} + \beta_{j+1} X_{j+1} +\cdots + \beta_k X_k + \varepsilon<br>$$</p>
+<p>$\frac{1}{1-R_j^2}$便称作VIF，若VIF&lt;3，说明该变量基本不存在多重共线性性问题，若VIF&gt;10，说明问题比较严重.</p>
+<h2 id="误差项的方差应该是常数"><a href="#误差项的方差应该是常数" class="headerlink" title="误差项的方差应该是常数"></a>误差项的方差应该是常数</h2><p>这一现象被称为同方差性，违反的则被称为异方差性.</p>
+<h3 id="影响-3"><a href="#影响-3" class="headerlink" title="影响"></a>影响</h3><p>通常异方差由异常值导致，在回归模型中，这些异常值可能会被给予过大的权重，以至于影响模型的准确性，同时会导致置信区间相较于正常情况不确定地偏大或者偏小.</p>
+<h3 id="检查办法-2"><a href="#检查办法-2" class="headerlink" title="检查办法"></a>检查办法</h3><p>可以使用残差VS拟合值，如果异方差存在，会在图中看到明显的漏斗状，观察标准化后的残差VS估计值图，如果异方差存在，则图中应该可以看到明显的趋势性.同时也可以使用Breusch-Pagan / Cook–Weisberg test.</p>
+<p><img src="%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/006mbQc7gy1framcprdcwj30g906r0t2.jpg" alt="残差VS拟合值"></p>
+<p><img src="%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/006mbQc7gy1framu8xdqhj30l50a5mz6.jpg"></p>
+<h3 id="解决办法-1"><a href="#解决办法-1" class="headerlink" title="解决办法"></a>解决办法</h3><p>对$Y$进行变换，如$\log(Y) or \sqrt Y$，也可以使用加权最小二乘法来解决这个问题.</p>
+<h2 id="误差项应该是高斯分布"><a href="#误差项应该是高斯分布" class="headerlink" title="误差项应该是高斯分布"></a>误差项应该是高斯分布</h2><h3 id="影响-4"><a href="#影响-4" class="headerlink" title="影响"></a>影响</h3><p>如果违反了这一假设，置信区间也会不确定地变大或者变小.</p>
+<h3 id="检查办法-3"><a href="#检查办法-3" class="headerlink" title="检查办法"></a>检查办法</h3><p>可以通过查看QQ图（如下），如果图中的散点呈直线状表示数据为高斯分布，否则为非高斯分布，还有另外的方法如通过Kolmogorov-Smirnov test, Shapiro-Wilk test进行检查.</p>
+<p><img src="%E8%AF%91-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE/006mbQc7gy1framk3nr2qj30l80aejsm.jpg"></p>
+<h3 id="解决办法-2"><a href="#解决办法-2" class="headerlink" title="解决办法"></a>解决办法</h3><p>$X$或$Y$的非线性变换会改善违例情况.</p>
+]]></content>
+      <categories>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>回归分析</tag>
+        <tag>回归假设</tag>
+      </tags>
+  </entry>
+</search>
